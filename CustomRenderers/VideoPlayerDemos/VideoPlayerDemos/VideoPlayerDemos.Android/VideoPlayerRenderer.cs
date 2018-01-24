@@ -31,6 +31,20 @@ namespace MediaHelpers.Droid
                 // Might have to override GetDesiredSize!
                 videoView.LayoutParameters = new LayoutParams(LayoutParams.MatchParent, LayoutParams.MatchParent);
 
+                var x = videoView.LayoutParameters;
+
+                var z = videoView.ForegroundGravity;
+
+                
+
+                videoView.SetForegroundGravity(Android.Views.GravityFlags.Fill);
+
+                var y = this.Parent;
+
+                var a = videoView.LayoutParameters as Android.Widget.RelativeLayout.LayoutParams;
+           //     a.
+
+
                 SetNativeControl(videoView);
             }
 
@@ -70,6 +84,8 @@ namespace MediaHelpers.Droid
         private void OnVideoViewPrepared(object sender, EventArgs args)
         {
             ((IVideoPlayerController)Element).Duration = TimeSpan.FromMilliseconds(Control.Duration);
+
+     //       Control.Invalidate();
         }
 
         private void OnVideoViewInfo(object sender, MediaPlayer.InfoEventArgs args)
@@ -88,11 +104,14 @@ namespace MediaHelpers.Droid
         }
 
 
-
+    
 
 
         public override SizeRequest GetDesiredSize(int widthConstraint, int heightConstraint)
         {
+            System.Diagnostics.Debug.WriteLine("Size: {0} {1}", Control.Width, Control.Height);
+
+
             SizeRequest size = base.GetDesiredSize(widthConstraint, heightConstraint);
             return size;
         }
@@ -108,6 +127,10 @@ namespace MediaHelpers.Droid
             else if (args.PropertyName == VideoPlayer.AreTransportControlsEnabledProperty.PropertyName)
             {
                 SetAreTransportControlsEnabled();
+            }
+            else if (args.PropertyName == VideoPlayer.PositionProperty.PropertyName)
+            {
+                SetPosition();
             }
         }
 
@@ -171,10 +194,43 @@ namespace MediaHelpers.Droid
             }
         }
 
+        // TODO: Can Move up 
+        void SetPosition()
+        {
+            var x = Control.Parent;
+
+             
+
+            if (Math.Abs(Control.CurrentPosition - Element.Position.TotalMilliseconds) > 1000)
+            {
+                Control.SeekTo((int)Element.Position.TotalMilliseconds);
+            }
+        }
+
         // Event handler to update status
         void OnUpdateStatus(object sender, EventArgs args)
         {
-            ((IElementController)Element).SetValueFromRenderer(VideoPlayer.PositionProperty, TimeSpan.FromMilliseconds(Control.CurrentPosition));
+            //        System.Diagnostics.Debug.WriteLine("UpdateStatus: {0}", TimeSpan.FromMilliseconds(Control.CurrentPosition));
+
+            if (Control != null)
+            {
+                var x = TimeSpan.FromMilliseconds(Control.CurrentPosition);
+
+                //      Element.Position = x;
+
+                ((IElementController)Element).SetValueFromRenderer(VideoPlayer.PositionProperty, x); //  TimeSpan.FromSeconds(3)); //   TimeSpan.FromMilliseconds(Control.CurrentPosition));
+            }
+      //      Element.SetValue(VideoPlayer.PositionProperty, x);
+            /*
+                        try
+                        {
+                            ((IElementController)Element).SetValueFromRenderer(VideoPlayer.PositionProperty, TimeSpan.FromMilliseconds(Control.CurrentPosition));
+                        }
+                        catch (Exception exc)
+                        {
+                            System.Diagnostics.Debug.WriteLine(exc);
+                        }
+            */
         }
 
         // Event handlers to implement methods

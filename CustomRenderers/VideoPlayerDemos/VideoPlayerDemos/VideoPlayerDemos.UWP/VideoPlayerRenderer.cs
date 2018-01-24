@@ -94,6 +94,10 @@ namespace MediaHelpers.UWP
             {
                 SetAreTransportControlsEnabled();
             }
+            else if (args.PropertyName == VideoPlayer.PositionProperty.PropertyName)
+            {
+                SetPosition();
+            }
         }
 
         async void SetSource()
@@ -129,6 +133,14 @@ namespace MediaHelpers.UWP
         void SetAreTransportControlsEnabled()
         {
             Control.AreTransportControlsEnabled = Element.AreTransportControlsEnabled;
+        }
+
+        void SetPosition()
+        {
+            if (Math.Abs((Control.Position - Element.Position).TotalSeconds) > 1)
+            {
+                Control.Position = Element.Position;
+            }
         }
 
         // Event handler to update status

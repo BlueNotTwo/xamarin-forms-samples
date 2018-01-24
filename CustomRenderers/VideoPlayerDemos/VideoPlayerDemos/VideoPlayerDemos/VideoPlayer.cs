@@ -15,6 +15,8 @@ namespace MediaHelpers
         {
             Device.StartTimer(TimeSpan.FromMilliseconds(100), () =>
             {
+  //              System.Diagnostics.Debug.WriteLine("Timer calling UpdateStatus");
+
                 UpdateStatus?.Invoke(this, EventArgs.Empty);
                 return true;
             });
@@ -102,7 +104,12 @@ namespace MediaHelpers
 
         // Position property
         public static readonly BindableProperty PositionProperty =
-            BindableProperty.Create("Position", typeof(TimeSpan), typeof(VideoPlayer), new TimeSpan());
+            BindableProperty.Create("Position", typeof(TimeSpan), typeof(VideoPlayer), new TimeSpan()
+                
+                
+                
+                
+                );
 
         public TimeSpan Position
         {
@@ -131,8 +138,5 @@ namespace MediaHelpers
         {
             StopRequested?.Invoke(this, EventArgs.Empty);
         }
-
-
-
     }
 }

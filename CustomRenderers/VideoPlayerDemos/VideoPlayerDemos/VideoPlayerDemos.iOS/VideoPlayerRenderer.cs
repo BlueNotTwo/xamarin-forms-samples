@@ -74,6 +74,19 @@ namespace MediaHelpers.iOS
             {
                 SetAreTransportControlsEnabled();
             }
+            else if (args.PropertyName == VideoPlayer.PositionProperty.PropertyName)
+            {
+                // TODO: Notice no SetPosition property
+
+                AVPlayer player = ((AVPlayerViewController)ViewController).Player;
+
+                TimeSpan controlPosition = ConvertTime(player.CurrentTime);
+
+                if (Math.Abs((controlPosition - Element.Position).TotalSeconds) > 1)
+                {
+                    player.Seek(CMTime.FromSeconds(Element.Position.TotalSeconds, 1));
+                }
+            }
         }
 
         void SetSource()
@@ -184,7 +197,7 @@ namespace MediaHelpers.iOS
         void OnStopRequested(object sender, EventArgs args)
         {
             ((AVPlayerViewController)ViewController).Player.Pause();
-            ((AVPlayerViewController)ViewController).Player.Seek(new CMTime(0, 0));
+            ((AVPlayerViewController)ViewController).Player.Seek(new CMTime(0, 1));
         }
     }
 }

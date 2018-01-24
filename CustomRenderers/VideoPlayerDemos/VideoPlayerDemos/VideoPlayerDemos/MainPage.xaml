@@ -18,10 +18,11 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <media:VideoPlayer x:Name="videoPlayer"
-                           Grid.Row="0"                 BackgroundColor="Aqua"
+                           Grid.Row="0"                 BackgroundColor="Aqua"         
                            AutoPlay="True" 
                            AreTransportControlsEnabled="False">
             <!--<media:VideoPlayer.Source>
@@ -43,7 +44,7 @@
 
         <StackLayout Grid.Row="1"
                      Orientation="Horizontal">
-            
+
             <Button Text="Load"
                     Clicked="OnLoadButtonClicked" />
 
@@ -57,7 +58,12 @@
 
             <Button Text="Stop"
                     Clicked="OnStopButtonClicked" />
-            
+
+        </StackLayout>
+
+        <StackLayout Grid.Row="2"
+                     Orientation="Horizontal">
+
             <Label Text="{Binding Source={x:Reference videoPlayer},
                                   Path=Position,
                                   StringFormat='{0:hh\\:mm\\:ss}'}" />
@@ -69,13 +75,30 @@
                                   StringFormat='{0:hh\\:mm\\:ss}'}" />
         </StackLayout>
 
-        <Slider Grid.Row="2"
-                Minimum="-1"
-                Maximum="{Binding Source={x:Reference videoPlayer},
-                                  Path=Duration.TotalSeconds}"
-                Value="{Binding Source={x:Reference videoPlayer},
-                                Path=Position.TotalSeconds}" />
-        
+        <!--<local:PositionSlider Grid.Row="2"            x:Name="slider"
+                Duration="{Binding Source={x:Reference videoPlayer},
+                                  Path=Duration}"
+                Position="{Binding Source={x:Reference videoPlayer},
+                                Path=Position,
+            
+            
+            Mode=TwoWay
+            
+            
+            }" />-->
+
+
+        <local:PositionSlider Grid.Row="3"            x:Name="slider"
+                              
+                               Duration="{Binding Source={x:Reference videoPlayer},
+                                  Path=Duration}"           
+                              
+                         Position="{Binding Source={x:Reference videoPlayer},
+                                Path=Position}"   />
+
+        <!--<Label Grid.Row="3"
+               Text="{Binding Source={x:Reference slider}, Path=Value, StringFormat='{0}'}" />-->
+
         <!-- On Android, TotalSeconds property isn't found for Value, but Slider still works -->
     </Grid>
 
