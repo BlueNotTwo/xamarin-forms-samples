@@ -36,7 +36,7 @@ namespace MediaHelpers.iOS
                 SetNativeControl(_playerViewController.View);
 
 
-
+                System.Diagnostics.Debug.WriteLine("Initial Status: {0} Time-Control Status: {1}", player.Status, player.TimeControlStatus);
 
             }
 
@@ -174,9 +174,60 @@ namespace MediaHelpers.iOS
             ((AVPlayerViewController)ViewController).ShowsPlaybackControls = Element.AreTransportControlsEnabled;
         }
 
+        AVPlayerStatus status;
+        AVPlayerTimeControlStatus tcStatus;
+
         // Event handler to update status
         void OnUpdateStatus(object sender, EventArgs args)
         {
+            AVPlayerStatus currentStatus = ((AVPlayerViewController)ViewController).Player.Status;
+
+            if (status != currentStatus)
+            {
+                status = currentStatus;
+                System.Diagnostics.Debug.WriteLine("Status: {0}", status);
+            }
+
+            AVPlayerTimeControlStatus currentTcStatus = ((AVPlayerViewController)ViewController).Player.TimeControlStatus;
+
+            if (tcStatus != currentTcStatus)
+            {
+                tcStatus = currentTcStatus;
+                System.Diagnostics.Debug.WriteLine("Time Control Status: {0}", tcStatus);
+            }
+
+            //       if (tcStatus == AVPlayerTimeControlStatus/)
+
+            VideoStatus videoStatus = VideoStatus.None;
+
+            switch (tcStatus)
+            {
+                case AVPlayerTimeControlStatus.Playing:
+                    videoStatus = VideoStatus.Playing;
+                    break;
+
+                case AVPlayerTimeControlStatus.Paused:
+                    videoStatus = VideoStatus.Paused;
+                    break;
+
+                default:
+                    switch (status)
+                    {
+                        case AVPlayerStatus.ReadyToPlay:
+                            videoStatus = VideoStatus.Ready;
+                            break;
+
+                        default:
+                            videoStatus = VideoStatus.None;
+                            break;
+                    }
+                    break;
+            }
+
+            ((IVideoPlayerController)Element).Status = videoStatus;
+
+
+
             CMTime cmTime = ((AVPlayerViewController)ViewController).Player.CurrentTime;
             //     seconds = Double.IsNaN(seconds) ? 0 : seconds;
 

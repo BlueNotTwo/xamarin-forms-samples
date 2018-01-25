@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Media.Core;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.UWP;
 
@@ -28,14 +24,41 @@ namespace MediaHelpers.UWP
 
                 MediaElement mediaElement = new MediaElement();
 
-                mediaElement.MediaOpened += (sender, e) =>
+                System.Diagnostics.Debug.WriteLine("initial CurrentState = " + mediaElement.CurrentState);
+            
+
+            mediaElement.MediaOpened += (sender, e) =>
                 {
                     ((IVideoPlayerController)Element).Duration = mediaElement.NaturalDuration.TimeSpan;
                 };
 
                 mediaElement.CurrentStateChanged += (sender, e) =>
                 {
+                    System.Diagnostics.Debug.WriteLine("CurrentState = " + mediaElement.CurrentState);
 
+                    VideoStatus videoStatus = VideoStatus.None;
+
+                    switch (mediaElement.CurrentState)
+                    {
+                        case MediaElementState.Closed:
+                            break;
+
+                        case MediaElementState.Opening:
+                        case MediaElementState.Buffering:
+                            videoStatus = VideoStatus.Ready;
+                            break;
+
+                        case MediaElementState.Playing:
+                            videoStatus = VideoStatus.Playing;
+                            break;
+
+                        case MediaElementState.Paused:
+                        case MediaElementState.Stopped:
+                            videoStatus = VideoStatus.Paused;
+                            break;
+                    }
+
+                    ((IVideoPlayerController)Element).Status = videoStatus;
                 };
 
                 // MediaEnded, MediaFailed

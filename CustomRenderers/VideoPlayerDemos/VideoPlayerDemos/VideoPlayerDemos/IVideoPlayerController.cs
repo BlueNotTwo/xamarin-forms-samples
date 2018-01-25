@@ -14,6 +14,8 @@ namespace MediaHelpers
 
 
             TimeSpan Duration { set; get; }
+
+        VideoStatus Status { set; get; }
     
 
         event EventHandler PlayRequested;       // ???? See IWebViewController

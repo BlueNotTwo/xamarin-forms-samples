@@ -50,6 +50,23 @@ namespace MediaHelpers
             get { return (bool)GetValue(AreTransportControlsEnabledProperty); }
         }
 
+        // Status read-only property
+        private static readonly BindablePropertyKey StatusPropertyKey =
+            BindableProperty.CreateReadOnly("Status", typeof(VideoStatus), typeof(VideoPlayer), VideoStatus.None);
+
+        public static readonly BindableProperty StatusProperty = StatusPropertyKey.BindableProperty;
+
+        public VideoStatus Status
+        {
+            get { return (VideoStatus)GetValue(StatusProperty); }
+        }
+
+        VideoStatus IVideoPlayerController.Status
+        {
+            set { SetValue(StatusPropertyKey, value); }
+            get { return Status; }
+        }
+
         // CanPause read-only property
         private static readonly BindablePropertyKey CanPausePropertyKey =
             BindableProperty.CreateReadOnly("CanPause", typeof(bool), typeof(VideoPlayer), false);
@@ -104,12 +121,7 @@ namespace MediaHelpers
 
         // Position property
         public static readonly BindableProperty PositionProperty =
-            BindableProperty.Create("Position", typeof(TimeSpan), typeof(VideoPlayer), new TimeSpan()
-                
-                
-                
-                
-                );
+            BindableProperty.Create("Position", typeof(TimeSpan), typeof(VideoPlayer), new TimeSpan());
 
         public TimeSpan Position
         {

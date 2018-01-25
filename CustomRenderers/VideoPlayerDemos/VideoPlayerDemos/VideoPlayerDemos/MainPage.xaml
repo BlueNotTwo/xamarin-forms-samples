@@ -19,17 +19,19 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <media:VideoPlayer x:Name="videoPlayer"
                            Grid.Row="0"                 BackgroundColor="Aqua"         
-                           AutoPlay="True" 
+                           AutoPlay="False" 
                            AreTransportControlsEnabled="False">
-            <!--<media:VideoPlayer.Source>
-                <media:UriVideoSource Uri="{x:Static local:MainPage.ElephantsDream}" />
-            </media:VideoPlayer.Source>-->
-
+            
             <media:VideoPlayer.Source>
+                <media:UriVideoSource Uri="{x:Static local:MainPage.ElephantsDream}" />
+            </media:VideoPlayer.Source>
+
+            <!--<media:VideoPlayer.Source>
                 <media:ResourceVideoSource>
                     <media:ResourceVideoSource.Path>
                         <OnPlatform x:TypeArguments="x:String">
@@ -39,7 +41,9 @@
                         </OnPlatform>
                     </media:ResourceVideoSource.Path>
                 </media:ResourceVideoSource>
-            </media:VideoPlayer.Source>
+            </media:VideoPlayer.Source>-->
+            
+            
         </media:VideoPlayer>
 
         <StackLayout Grid.Row="1"
@@ -48,15 +52,18 @@
             <Button Text="Load"
                     Clicked="OnLoadButtonClicked" />
 
-            <Button Text="Play"
+            <Button Text="&#x25B6;&#xFE0F; Play"
                     Clicked="OnPlayButtonClicked" />
 
-            <Button Text="Pause"
+            <Button Text="&#x23F8; Pause"
+                    Clicked="OnPauseButtonClicked" />
+
+            <!--<Button Text="&#x23F8; Pause"
                     Clicked="OnPauseButtonClicked"
                     IsEnabled="{Binding Source={x:Reference videoPlayer},
-                                        Path=CanPause}" />
+                                        Path=CanPause}" />-->
 
-            <Button Text="Stop"
+            <Button Text="&#x23F9; Stop"
                     Clicked="OnStopButtonClicked" />
 
         </StackLayout>
@@ -95,6 +102,11 @@
                               
                          Position="{Binding Source={x:Reference videoPlayer},
                                 Path=Position}"   />
+
+        <Label Text="{Binding Source={x:Reference videoPlayer},
+                              Path=Status,
+                              StringFormat='Status = {0}'}"
+               Grid.Row="4" />
 
         <!--<Label Grid.Row="3"
                Text="{Binding Source={x:Reference slider}, Path=Value, StringFormat='{0}'}" />-->

@@ -1,6 +1,9 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 using Xamarin.Forms;
+
+
+
+// TODO: Change to MediaHelpers
 
 namespace VideoPlayerDemos
 {

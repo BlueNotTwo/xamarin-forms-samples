@@ -77,22 +77,24 @@ namespace MediaHelpers.Droid
         // VideoView event handlers
         private void OnVideoViewPrepared(object sender, EventArgs args)
         {
+            System.Diagnostics.Debug.WriteLine("Prepared!");
+
             ((IVideoPlayerController)Element).Duration = TimeSpan.FromMilliseconds(videoView.Duration);
         }
 
         private void OnVideoViewInfo(object sender, MediaPlayer.InfoEventArgs args)
         {
-            System.Diagnostics.Debug.WriteLine("{0}", args.What);
+            System.Diagnostics.Debug.WriteLine("Info: {0}", args.What);
         }
 
         private void OnVideoViewCompletion(object sender, EventArgs args)
         {
-            ;
+            System.Diagnostics.Debug.WriteLine("Completion!");
         }
 
         private void OnVideoViewError(object sender, MediaPlayer.ErrorEventArgs args)
         {
-            ;
+            System.Diagnostics.Debug.WriteLine("Error: {0}", args.What); 
         }
 
         protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs args)
@@ -182,11 +184,22 @@ namespace MediaHelpers.Droid
             }
         }
 
+
+        bool isPlaying = false;
+
         // Event handler to update status
         void OnUpdateStatus(object sender, EventArgs args)
         {
             if (Control != null)
             {
+                if (isPlaying != videoView.IsPlaying)
+                {
+                    isPlaying = videoView.IsPlaying;
+                    System.Diagnostics.Debug.WriteLine("IsPlaying = {0}", isPlaying);
+                }
+
+
+
                 TimeSpan timeSpan = TimeSpan.FromMilliseconds(videoView.CurrentPosition);
                 ((IElementController)Element).SetValueFromRenderer(VideoPlayer.PositionProperty, timeSpan);
             }

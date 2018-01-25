@@ -49,6 +49,7 @@
     <Compile Include="UriVideoSource.cs" />
     <Compile Include="VideoPlayer.cs" />
     <Compile Include="VideoSource.cs" />
+    <Compile Include="VideoStatus.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MainPage.xaml">
