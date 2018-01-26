@@ -1,35 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace MediaHelpers
 {
+    [TypeConverter(typeof(VideoSourceConverter))]
     public abstract class VideoSource : Element
     {
-    }
-
-
-
-
-
-    public class ResourceVideoSource : VideoSource
-    {
-        public static readonly BindableProperty PathProperty =
-            BindableProperty.Create("Path", typeof(string), typeof(ResourceVideoSource));
-
-        public string Path
+        public static VideoSource FromUri(string uri)
         {
-            set { SetValue(PathProperty, value); }
-            get { return (string)GetValue(PathProperty); }
+            return new UriVideoSource() { Uri = uri };
+        }
+
+        public static VideoSource FromFile(string file)
+        {
+            return new FileVideoSource() { File = file };
+        }
+
+        public static VideoSource FromResource(string path)
+        {
+            return new ResourceVideoSource() { Path = path };
         }
     }
-
-
-
-
-
-
 }

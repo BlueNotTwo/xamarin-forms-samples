@@ -2,8 +2,8 @@
 {
     public enum VideoStatus
     {
-        None,
-        Ready,
+        Unknown,
+        NotReady,
         Playing,
         Paused
     }

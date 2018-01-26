@@ -198,30 +198,40 @@ namespace MediaHelpers.iOS
 
             //       if (tcStatus == AVPlayerTimeControlStatus/)
 
-            VideoStatus videoStatus = VideoStatus.None;
+            VideoStatus videoStatus = VideoStatus.Unknown;
 
-            switch (tcStatus)
+            switch (status)
             {
-                case AVPlayerTimeControlStatus.Playing:
-                    videoStatus = VideoStatus.Playing;
+                case AVPlayerStatus.ReadyToPlay:
+                    switch (tcStatus)
+                    {
+                        case AVPlayerTimeControlStatus.Playing:
+                            videoStatus = VideoStatus.Playing;
+                            break;
+
+                        case AVPlayerTimeControlStatus.Paused:
+                            videoStatus = VideoStatus.Paused;
+                            break;
+                    }
                     break;
 
-                case AVPlayerTimeControlStatus.Paused:
-                    videoStatus = VideoStatus.Paused;
+                default:
+                    videoStatus = VideoStatus.NotReady;
                     break;
-
+/*
                 default:
                     switch (status)
                     {
                         case AVPlayerStatus.ReadyToPlay:
-                            videoStatus = VideoStatus.Ready;
+                            videoStatus = VideoStatus.NotReady;
                             break;
 
                         default:
-                            videoStatus = VideoStatus.None;
+                            videoStatus = VideoStatus.Unknown;
                             break;
                     }
                     break;
+*/
             }
 
             ((IVideoPlayerController)Element).Status = videoStatus;

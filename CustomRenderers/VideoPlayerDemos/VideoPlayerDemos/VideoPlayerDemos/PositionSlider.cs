@@ -46,7 +46,12 @@ namespace VideoPlayerDemos
             {
                 if (args.PropertyName == Slider.ValueProperty.PropertyName)
                 {
-                    Position = TimeSpan.FromSeconds(Value);
+                    TimeSpan newPosition = TimeSpan.FromSeconds(Value);
+
+                    if (Math.Abs(newPosition.Seconds - Position.Seconds) / Duration.Seconds > 0.01)
+                    {
+                        Position = newPosition;
+                    }
                 }
             };
         }

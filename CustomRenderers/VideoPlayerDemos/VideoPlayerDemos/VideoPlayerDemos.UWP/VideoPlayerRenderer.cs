@@ -36,18 +36,10 @@ namespace MediaHelpers.UWP
                 {
                     System.Diagnostics.Debug.WriteLine("CurrentState = " + mediaElement.CurrentState);
 
-                    VideoStatus videoStatus = VideoStatus.None;
+                    VideoStatus videoStatus = VideoStatus.Unknown;
 
                     switch (mediaElement.CurrentState)
                     {
-                        case MediaElementState.Closed:
-                            break;
-
-                        case MediaElementState.Opening:
-                        case MediaElementState.Buffering:
-                            videoStatus = VideoStatus.Ready;
-                            break;
-
                         case MediaElementState.Playing:
                             videoStatus = VideoStatus.Playing;
                             break;
@@ -55,6 +47,10 @@ namespace MediaHelpers.UWP
                         case MediaElementState.Paused:
                         case MediaElementState.Stopped:
                             videoStatus = VideoStatus.Paused;
+                            break;
+
+                        default:
+                            videoStatus = VideoStatus.NotReady;
                             break;
                     }
 
@@ -125,8 +121,6 @@ namespace MediaHelpers.UWP
 
         async void SetSource()
         {
-            if (Element.Source != null)
-            {
                 if (Element.Source is UriVideoSource)
                 {
                     string uriString = (Element.Source as UriVideoSource).Uri;
@@ -145,7 +139,6 @@ namespace MediaHelpers.UWP
                     string path = "ms-appx:///" + (Element.Source as ResourceVideoSource).Path;
                     Control.Source = new Uri(path);
                 }
-            }
         }
 
         void SetAutoPlay()

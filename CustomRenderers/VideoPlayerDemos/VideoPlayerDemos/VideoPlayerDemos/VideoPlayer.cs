@@ -15,17 +15,15 @@ namespace MediaHelpers
         {
             Device.StartTimer(TimeSpan.FromMilliseconds(100), () =>
             {
-  //              System.Diagnostics.Debug.WriteLine("Timer calling UpdateStatus");
-
                 UpdateStatus?.Invoke(this, EventArgs.Empty);
                 return true;
             });
         }
 
-
         public static readonly BindableProperty SourceProperty =
             BindableProperty.Create("Source", typeof(VideoSource), typeof(VideoPlayer), null);
 
+        [TypeConverter(typeof(VideoSourceConverter))]
         public VideoSource Source
         {
             set { SetValue(SourceProperty, value); }
@@ -52,7 +50,7 @@ namespace MediaHelpers
 
         // Status read-only property
         private static readonly BindablePropertyKey StatusPropertyKey =
-            BindableProperty.CreateReadOnly("Status", typeof(VideoStatus), typeof(VideoPlayer), VideoStatus.None);
+            BindableProperty.CreateReadOnly("Status", typeof(VideoStatus), typeof(VideoPlayer), VideoStatus.Unknown);
 
         public static readonly BindableProperty StatusProperty = StatusPropertyKey.BindableProperty;
 

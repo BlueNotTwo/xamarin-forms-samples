@@ -8,6 +8,8 @@ namespace MediaHelpers
 { 
     public interface IVideoPlayerController
     {
+
+        // TODO: Remove these???
         bool CanPause { set; get; }
 
         bool CanSeek { set; get; }

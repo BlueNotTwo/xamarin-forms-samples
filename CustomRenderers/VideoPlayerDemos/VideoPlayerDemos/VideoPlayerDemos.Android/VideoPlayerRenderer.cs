@@ -20,6 +20,7 @@ namespace MediaHelpers.Droid
         // Used to display transport controls
         MediaController mediaController;
         VideoView videoView;
+        bool isPrepared;
 
         protected override void OnElementChanged(ElementChangedEventArgs<VideoPlayer> args)
         {
@@ -36,6 +37,8 @@ namespace MediaHelpers.Droid
                 relativeLayout.AddView(videoView);
 
                 // Center the VideoView in the RelativeLayout
+
+                videoView.LayoutParameters = new ARelativeLayout.LayoutParams(LayoutParams.MatchParent, LayoutParams.MatchParent);
                 ARelativeLayout.LayoutParams layoutParams = (ARelativeLayout.LayoutParams)videoView.LayoutParameters;
                 layoutParams.AddRule(LayoutRules.CenterInParent);
 
@@ -79,6 +82,8 @@ namespace MediaHelpers.Droid
         {
             System.Diagnostics.Debug.WriteLine("Prepared!");
 
+            isPrepared = true;
+
             ((IVideoPlayerController)Element).Duration = TimeSpan.FromMilliseconds(videoView.Duration);
         }
 
@@ -117,15 +122,21 @@ namespace MediaHelpers.Droid
 
         void SetSource()
         {
+            isPrepared = false;
             bool hasSetSource = false;
 
-            if (Element.Source != null)
+            if (Element.Source != null)             // TODO: Remove this?
             {
                 if (Element.Source is UriVideoSource)
                 {
+                    // TODO: Do this check for all and in other renderers
+
                     string uri = (Element.Source as UriVideoSource).Uri;
-                    videoView.SetVideoURI(Android.Net.Uri.Parse(uri));
-                    hasSetSource = true;
+                    if (!String.IsNullOrWhiteSpace(uri))
+                    {
+                        videoView.SetVideoURI(Android.Net.Uri.Parse(uri));
+                        hasSetSource = true;
+                    }
                 }
                 else if (Element.Source is FileVideoSource)
                 {
@@ -197,6 +208,18 @@ namespace MediaHelpers.Droid
                     isPlaying = videoView.IsPlaying;
                     System.Diagnostics.Debug.WriteLine("IsPlaying = {0}", isPlaying);
                 }
+
+                VideoStatus status = VideoStatus.NotReady;
+
+                if (isPrepared)
+                {
+                    status = isPlaying ? VideoStatus.Playing : VideoStatus.Paused;
+                }
+
+                ((IVideoPlayerController)Element).Status = status;
+
+
+
 
 
 

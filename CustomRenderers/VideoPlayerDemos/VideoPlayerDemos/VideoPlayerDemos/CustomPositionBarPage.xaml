@@ -3,14 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:VideoPlayerDemos"
              xmlns:media="clr-namespace:MediaHelpers"
-             x:Class="VideoPlayerDemos.MainPage">
-
-    <!--<media:VideoPlayer AutoPlay="True">
-        <media:VideoPlayer.Source>
-            <media:UriVideoSource Uri="{x:Static local:MainPage.ElephantsDream}" />
-        </media:VideoPlayer.Source>
-    </media:VideoPlayer>-->
-
+             x:Class="VideoPlayerDemos.CustomPositionBarPage"
+             Title="Custom Position Bar">
 
 
     <Grid>
@@ -25,11 +19,16 @@
         <media:VideoPlayer x:Name="videoPlayer"
                            Grid.Row="0"                 BackgroundColor="Aqua"         
                            AutoPlay="False" 
-                           AreTransportControlsEnabled="False">
-            
-            <media:VideoPlayer.Source>
-                <media:UriVideoSource Uri="{x:Static local:MainPage.ElephantsDream}" />
-            </media:VideoPlayer.Source>
+                           AreTransportControlsEnabled="True"
+                           
+                           
+                            Source="{StaticResource BigBuckBunny}"                           
+                           
+                           >
+
+            <!--<media:VideoPlayer.Source>
+                <media:UriVideoSource Uri="{StaticResource ElephantsDream}" />
+            </media:VideoPlayer.Source>-->
 
             <!--<media:VideoPlayer.Source>
                 <media:ResourceVideoSource>
@@ -42,21 +41,56 @@
                     </media:ResourceVideoSource.Path>
                 </media:ResourceVideoSource>
             </media:VideoPlayer.Source>-->
-            
-            
+
+
         </media:VideoPlayer>
 
         <StackLayout Grid.Row="1"
                      Orientation="Horizontal">
 
-            <Button Text="Load"
-                    Clicked="OnLoadButtonClicked" />
 
-            <Button Text="&#x25B6;&#xFE0F; Play"
+            <Label Text="{Binding Source={x:Static media:VideoStatus.Playing}, StringFormat='{0}'}" />
+
+            <!--<Button Text="&#x25B6; Play"
                     Clicked="OnPlayButtonClicked" />
 
             <Button Text="&#x23F8; Pause"
-                    Clicked="OnPauseButtonClicked" />
+                    Clicked="OnPauseButtonClicked" />-->
+
+            <Button Text="&#x25B6;&#xFE0F; Play"
+                    Clicked="OnPlayPauseButtonClicked">
+                <Button.Triggers>
+                    <DataTrigger TargetType="Button"
+                                 Binding="{Binding Source={x:Reference videoPlayer},
+                                                   Path=Status}"
+                                 Value="{x:Static media:VideoStatus.Playing}">
+                        <Setter Property="Text" Value="&#x23F8; Pause" />
+                    </DataTrigger>
+
+                    <MultiTrigger TargetType="Button">
+                        <MultiTrigger.Conditions>
+
+                            <BindingCondition Binding="{Binding Source={x:Reference videoPlayer},
+                                                                Path=Status}"
+                                              Value="{x:Static media:VideoStatus.NotReady}" />
+
+                        </MultiTrigger.Conditions>
+
+                        <!-- Can Pause -->
+
+                        <Setter Property="IsEnabled" Value="False" />
+                    </MultiTrigger>
+
+                    <!--<DataTrigger TargetType="Button"
+                                 Binding="{Binding Source={x:Reference videoPlayer},
+                                                   Path=Status}"
+                                 Value="{x:Static media:VideoStatus.NotReady}">
+                        <Setter Property="IsEnabled" Value="False" />
+                    </DataTrigger>-->
+                </Button.Triggers>
+            </Button>
+
+
 
             <!--<Button Text="&#x23F8; Pause"
                     Clicked="OnPauseButtonClicked"
@@ -112,9 +146,10 @@
                Text="{Binding Source={x:Reference slider}, Path=Value, StringFormat='{0}'}" />-->
 
         <!-- On Android, TotalSeconds property isn't found for Value, but Slider still works -->
+
+
+
     </Grid>
 
-   
-    
 
 </ContentPage>
