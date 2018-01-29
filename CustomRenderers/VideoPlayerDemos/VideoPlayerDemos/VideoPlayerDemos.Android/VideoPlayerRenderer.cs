@@ -2,24 +2,23 @@
 using System.ComponentModel;
 using System.IO;
 
-using Xamarin.Forms;
-using Xamarin.Forms.Platform.Android;
-
 using Android.Content;
 using Android.Media;
 using Android.Widget;
 using ARelativeLayout = Android.Widget.RelativeLayout;
 
-[assembly: ExportRenderer(typeof(MediaHelpers.VideoPlayer),
-                          typeof(MediaHelpers.Droid.VideoPlayerRenderer))]
+using Xamarin.Forms;
+using Xamarin.Forms.Platform.Android;
 
-namespace MediaHelpers.Droid
+[assembly: ExportRenderer(typeof(FormsVideoLibrary.VideoPlayer),
+                          typeof(FormsVideoLibrary.Droid.VideoPlayerRenderer))]
+
+namespace FormsVideoLibrary.Droid
 {
     public class VideoPlayerRenderer : ViewRenderer<VideoPlayer, ARelativeLayout>
     {
-        // Used to display transport controls
-        MediaController mediaController;
         VideoView videoView;
+        MediaController mediaController;    // Used to display transport controls
         bool isPrepared;
 
         protected override void OnElementChanged(ElementChangedEventArgs<VideoPlayer> args)
@@ -31,29 +30,29 @@ namespace MediaHelpers.Droid
                 // Save the VideoView for future reference
                 videoView = new VideoView(Context);
 
-                // Without a parent RelativeLayout, the VideoView fills its alloted size
-                //  and does not have the correct aspect ratio
+                // Put the VideoView in a RelativeLayout
                 ARelativeLayout relativeLayout = new ARelativeLayout(Context);
                 relativeLayout.AddView(videoView);
 
                 // Center the VideoView in the RelativeLayout
-
-                videoView.LayoutParameters = new ARelativeLayout.LayoutParams(LayoutParams.MatchParent, LayoutParams.MatchParent);
-                ARelativeLayout.LayoutParams layoutParams = (ARelativeLayout.LayoutParams)videoView.LayoutParameters;
+                ARelativeLayout.LayoutParams layoutParams =
+                    new ARelativeLayout.LayoutParams(LayoutParams.MatchParent, LayoutParams.MatchParent);
                 layoutParams.AddRule(LayoutRules.CenterInParent);
+                videoView.LayoutParameters = layoutParams;
 
+                // Handle some VideoView events
+                videoView.Prepared += OnVideoViewPrepared;
+                videoView.Info += OnVideoViewInfo;
+                videoView.Completion += OnVideoViewCompletion;
+                videoView.Error += OnVideoViewError;
+
+                // Use the RelativeLayout as the native control
                 SetNativeControl(relativeLayout);
             }
 
             if (args.OldElement != null)
             {
-                videoView.Prepared -= OnVideoViewPrepared;
-                videoView.Info -= OnVideoViewInfo;
-                videoView.Completion -= OnVideoViewCompletion;
-                videoView.Error -= OnVideoViewError;
-
                 args.OldElement.UpdateStatus -= OnUpdateStatus;
-
                 args.OldElement.PlayRequested -= OnPlayRequested;
                 args.OldElement.PauseRequested -= OnPauseRequested;
                 args.OldElement.StopRequested -= OnStopRequested;
@@ -64,13 +63,7 @@ namespace MediaHelpers.Droid
                 SetSource();
                 SetAreTransportControlsEnabled();
 
-                videoView.Prepared += OnVideoViewPrepared;
-                videoView.Info += OnVideoViewInfo;
-                videoView.Completion += OnVideoViewCompletion;
-                videoView.Error += OnVideoViewError;
-
                 args.NewElement.UpdateStatus += OnUpdateStatus;
-
                 args.NewElement.PlayRequested += OnPlayRequested;
                 args.NewElement.PauseRequested += OnPauseRequested;
                 args.NewElement.StopRequested += OnStopRequested;
@@ -125,37 +118,41 @@ namespace MediaHelpers.Droid
             isPrepared = false;
             bool hasSetSource = false;
 
-            if (Element.Source != null)             // TODO: Remove this?
+            if (Element.Source is UriVideoSource)
             {
-                if (Element.Source is UriVideoSource)
-                {
-                    // TODO: Do this check for all and in other renderers
+                string uri = (Element.Source as UriVideoSource).Uri;
 
-                    string uri = (Element.Source as UriVideoSource).Uri;
-                    if (!String.IsNullOrWhiteSpace(uri))
-                    {
-                        videoView.SetVideoURI(Android.Net.Uri.Parse(uri));
-                        hasSetSource = true;
-                    }
-                }
-                else if (Element.Source is FileVideoSource)
+                if (!String.IsNullOrWhiteSpace(uri))
                 {
-                    string filename = (Element.Source as FileVideoSource).File;
+                    videoView.SetVideoURI(Android.Net.Uri.Parse(uri));
+                    hasSetSource = true;
+                }
+            }
+            else if (Element.Source is FileVideoSource)
+            {
+                string filename = (Element.Source as FileVideoSource).File;
+
+                if (!String.IsNullOrWhiteSpace(filename))
+                {
                     videoView.SetVideoPath(filename);
                     hasSetSource = true;
                 }
-                else if (Element.Source is ResourceVideoSource)
+            }
+            else if (Element.Source is ResourceVideoSource)
+            {
+                string package = Context.PackageName;
+                string path = (Element.Source as ResourceVideoSource).Path;
+
+                if (!String.IsNullOrWhiteSpace(path))
                 {
-                    string package = Context.PackageName;
-                    string path = (Element.Source as ResourceVideoSource).Path;
                     string filename = Path.GetFileNameWithoutExtension(path).ToLowerInvariant();
                     string uri = "android.resource://" + package + "/raw/" + filename;
                     videoView.SetVideoURI(Android.Net.Uri.Parse(uri));
                     hasSetSource = true;
                 }
+            }
 
                 
-            }
 
             // TODO: Is there an AutoPlay property to use instead of this logic?
             if (hasSetSource && Element.AutoPlay)
@@ -201,7 +198,7 @@ namespace MediaHelpers.Droid
         // Event handler to update status
         void OnUpdateStatus(object sender, EventArgs args)
         {
-            if (Control != null)
+//             if (videoView != null && Element != null)
             {
                 if (isPlaying != videoView.IsPlaying)
                 {

@@ -1,19 +1,16 @@
 ﻿using System;
-using System.IO;
 using System.Threading.Tasks;
 
 using Android.Content;
 
 using Xamarin.Forms;
 
-using MediaHelpers.Droid;
-using MediaHelpers;
-
+// Need application's MainActivity
 using VideoPlayerDemos.Droid;
 
-[assembly: Dependency(typeof(VideoPicker))]
+[assembly: Dependency(typeof(FormsVideoLibrary.Droid.VideoPicker))]
 
-namespace MediaHelpers.Droid
+namespace FormsVideoLibrary.Droid
 {
     public class VideoPicker : IVideoPicker
     {

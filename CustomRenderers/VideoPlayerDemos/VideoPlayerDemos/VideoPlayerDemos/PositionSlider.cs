@@ -1,11 +1,7 @@
 ﻿using System;
 using Xamarin.Forms;
 
-
-
-// TODO: Change to MediaHelpers
-
-namespace VideoPlayerDemos
+namespace FormsVideoLibrary
 {
     public class PositionSlider : Slider
     {

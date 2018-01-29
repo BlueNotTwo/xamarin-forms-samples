@@ -2,24 +2,24 @@
 using System.ComponentModel;
 using System.IO;
 
-using Xamarin.Forms;
-using Xamarin.Forms.Platform.iOS;
-
 using AVFoundation;
 using AVKit;
 using CoreMedia;
 using Foundation;
 using UIKit;
 
-using MediaHelpers;
-using MediaHelpers.iOS;
+using Xamarin.Forms;
+using Xamarin.Forms.Platform.iOS;
 
-[assembly: ExportRenderer(typeof(VideoPlayer), typeof(VideoPlayerRenderer))]
+[assembly: ExportRenderer(typeof(FormsVideoLibrary.VideoPlayer), 
+                          typeof(FormsVideoLibrary.iOS.VideoPlayerRenderer))]
 
-namespace MediaHelpers.iOS
+namespace FormsVideoLibrary.iOS
 {
     public class VideoPlayerRenderer : ViewRenderer<VideoPlayer, UIView>
     {
+        AVPlayer player;
+        AVPlayerItem playerItem;
         AVPlayerViewController _playerViewController;       // solely for ViewController property
 
         public override UIViewController ViewController => _playerViewController;
@@ -28,15 +28,28 @@ namespace MediaHelpers.iOS
         {
             base.OnElementChanged(args);
 
+
+
+           
+
+
+
             if (Control == null)
             {
+                // Create AVPlayerViewController
                 _playerViewController = new AVPlayerViewController();
-                AVPlayer player = new AVPlayer();
+
+                // Set Player property to AVPlayer
+                player = new AVPlayer();
                 _playerViewController.Player = player;
+
+                // Use the View from the controller as the native control
                 SetNativeControl(_playerViewController.View);
 
+            
 
-                System.Diagnostics.Debug.WriteLine("Initial Status: {0} Time-Control Status: {1}", player.Status, player.TimeControlStatus);
+
+         //       System.Diagnostics.Debug.WriteLine("Initial Status: {0} Time-Control Status: {1}", player.Status, player.TimeControlStatus);
 
             }
 
@@ -78,7 +91,7 @@ namespace MediaHelpers.iOS
             {
                 // TODO: Notice no SetPosition property
 
-                AVPlayer player = ((AVPlayerViewController)ViewController).Player;
+          //      AVPlayer player = ((AVPlayerViewController)ViewController).Player;
 
                 TimeSpan controlPosition = ConvertTime(player.CurrentTime);
 
@@ -91,77 +104,98 @@ namespace MediaHelpers.iOS
 
         void SetSource()
         {
-            AVPlayerItem playerItem = null;
+     //       AVPlayerItem playerItem = null;
 
-            if (Element.Source != null)
-            {
                 AVAsset asset = null;
 
-                if (Element.Source is UriVideoSource)
+            if (Element.Source is UriVideoSource)
+            {
+                string uri = (Element.Source as UriVideoSource).Uri;
+
+                if (!String.IsNullOrWhiteSpace(uri))
                 {
-                    string uri = (Element.Source as UriVideoSource).Uri;
                     asset = AVAsset.FromUrl(new NSUrl(uri));
                 }
-                else if (Element.Source is FileVideoSource)
+            }
+            else if (Element.Source is FileVideoSource)
+            {
+                string uri = (Element.Source as FileVideoSource).File;
+
+                if (!String.IsNullOrWhiteSpace(uri))
                 {
-                    string uri = (Element.Source as FileVideoSource).File;
                     asset = AVAsset.FromUrl(new NSUrl(uri));
                 }
-                else if (Element.Source is ResourceVideoSource)
+            }
+            else if (Element.Source is ResourceVideoSource)
+            {
+                string path = (Element.Source as ResourceVideoSource).Path;
+
+                if (!String.IsNullOrWhiteSpace(path))
                 {
-                    string path = (Element.Source as ResourceVideoSource).Path;
                     string directory = Path.GetDirectoryName(path);
                     string filename = Path.GetFileNameWithoutExtension(path);
                     string extension = Path.GetExtension(path).Substring(1);
                     NSUrl url = NSBundle.MainBundle.GetUrlForResource(filename, extension, directory);
                     asset = AVAsset.FromUrl(url);
                 }
-
-
-                if (asset != null)
-                {
-                    playerItem = new AVPlayerItem(asset);
-
-                    ((IVideoPlayerController)Element).Duration = ConvertTime(playerItem.Duration); 
-
-                    observer = playerItem.AddObserver("duration", NSKeyValueObservingOptions.Initial, 
-                        
-
-                        (sender) =>
-                                       // {
-                                            ((IVideoPlayerController)Element).Duration = ConvertTime(playerItem.Duration) // ; //  TimeSpan.FromSeconds(playerItem.Duration.Seconds);
-//                                        System.Diagnostics.Debug.WriteLine(playerItem.Duration.Seconds); //      TimeSpan.FromMilliseconds(playerItem.Duration.Value));
-                //                        }
-                
-                );
-/*
-                    timeObserver = playerItem.AddObserver("currenttime", NSKeyValueObservingOptions.New,
-                        (sender) =>
-                        {
-                            System.Diagnostics.Debug.WriteLine(TimeSpan.FromMilliseconds(playerItem.CurrentTime.Value));
-
-                        });
-  */                  
-                }
             }
+
+
+            if (asset != null)
+            {
+                //        if (playerItem != null && observer != null)
+                {
+                    //          playerItem.RemoveObserver(observer, NSKeyValueObservingOptions.Initial);
+                }
+
+
+                playerItem = new AVPlayerItem(asset);
+
+                /*               
+
+                               ((IVideoPlayerController)Element).Duration = ConvertTime(playerItem.Duration);
+
+                               IDisposable observer = null;
+
+                               observer = playerItem.AddObserver("duration", NSKeyValueObservingOptions.Initial, 
+                                   (sender) =>
+                                   {
+                                       ((IVideoPlayerController)Element).Duration = ConvertTime(playerItem.Duration);
+
+                                       if (observer != null)
+                                       {
+                                   //        System.Diagnostics.Debug.WriteLine("Duration: {0} {1}", ConvertTime(playerItem.Duration), observer);
+
+                                  //         System.Diagnostics.Debug.WriteLine("About to remove");
+                                     //      playerItem.RemoveObserver((NSObject)observer, "duration");
+                                     //      System.Diagnostics.Debug.WriteLine("Removed");
+                                           observer.Dispose();
+                                           observer = null;
+
+                                       }
+                                   }
+                                       );
+
+           */
+
+            }
+
+           
             
             ((AVPlayerViewController)ViewController).Player.ReplaceCurrentItemWithPlayerItem(playerItem);
+
+            player.ReplaceCurrentItemWithPlayerItem(playerItem);
 
             // TODO: Is there an AutoPlay property?
 
             if (playerItem != null && Element.AutoPlay)
             {
-                ((AVPlayerViewController)ViewController).Player.Play();
+//                ((AVPlayerViewController)ViewController).Player.Play();
+                player.Play();
             }
         }
 
-        TimeSpan ConvertTime(CMTime cmTime)
-        {
-            return TimeSpan.FromSeconds(Double.IsNaN(cmTime.Seconds) ? 0 : cmTime.Seconds);
-
-        }
-
-        private IDisposable observer;
+    //    private IDisposable observer;
     //    private IDisposable timeObserver;
 /*
         public void Observer(NSObservedChange nsObservedChange)
@@ -180,85 +214,99 @@ namespace MediaHelpers.iOS
         // Event handler to update status
         void OnUpdateStatus(object sender, EventArgs args)
         {
-            AVPlayerStatus currentStatus = ((AVPlayerViewController)ViewController).Player.Status;
-
-            if (status != currentStatus)
+            if (player != null)
             {
-                status = currentStatus;
-                System.Diagnostics.Debug.WriteLine("Status: {0}", status);
-            }
+                AVPlayerStatus currentStatus = player.Status;
 
-            AVPlayerTimeControlStatus currentTcStatus = ((AVPlayerViewController)ViewController).Player.TimeControlStatus;
+                if (status != currentStatus)
+                {
+                    status = currentStatus;
+                    System.Diagnostics.Debug.WriteLine("Status: {0}", status);
+                }
 
-            if (tcStatus != currentTcStatus)
-            {
-                tcStatus = currentTcStatus;
-                System.Diagnostics.Debug.WriteLine("Time Control Status: {0}", tcStatus);
-            }
+                AVPlayerTimeControlStatus currentTcStatus = player.TimeControlStatus;
 
-            //       if (tcStatus == AVPlayerTimeControlStatus/)
+                if (tcStatus != currentTcStatus)
+                {
+                    tcStatus = currentTcStatus;
+                    System.Diagnostics.Debug.WriteLine("Time Control Status: {0}", tcStatus);
+                }
 
-            VideoStatus videoStatus = VideoStatus.Unknown;
+                //       if (tcStatus == AVPlayerTimeControlStatus/)
 
-            switch (status)
-            {
-                case AVPlayerStatus.ReadyToPlay:
-                    switch (tcStatus)
-                    {
-                        case AVPlayerTimeControlStatus.Playing:
-                            videoStatus = VideoStatus.Playing;
-                            break;
+                VideoStatus videoStatus = VideoStatus.Unknown;
 
-                        case AVPlayerTimeControlStatus.Paused:
-                            videoStatus = VideoStatus.Paused;
-                            break;
-                    }
-                    break;
+                switch (status)
+                {
+                    case AVPlayerStatus.ReadyToPlay:
+                        switch (tcStatus)
+                        {
+                            case AVPlayerTimeControlStatus.Playing:
+                                videoStatus = VideoStatus.Playing;
+                                break;
 
-                default:
-                    videoStatus = VideoStatus.NotReady;
-                    break;
-/*
-                default:
-                    switch (status)
-                    {
-                        case AVPlayerStatus.ReadyToPlay:
-                            videoStatus = VideoStatus.NotReady;
-                            break;
+                            case AVPlayerTimeControlStatus.Paused:
+                                videoStatus = VideoStatus.Paused;
+                                break;
+                        }
+                        break;
 
-                        default:
-                            videoStatus = VideoStatus.Unknown;
-                            break;
-                    }
-                    break;
-*/
-            }
+                    default:
+                        videoStatus = VideoStatus.NotReady;
+                        break;
+                        /*
+                                        default:
+                                            switch (status)
+                                            {
+                                                case AVPlayerStatus.ReadyToPlay:
+                                                    videoStatus = VideoStatus.NotReady;
+                                                    break;
+
+                                                default:
+                                                    videoStatus = VideoStatus.Unknown;
+                                                    break;
+                                            }
+                                            break;
+                        */
+                }
 
             ((IVideoPlayerController)Element).Status = videoStatus;
+            }
+                if (playerItem != null)
+                {
+                    ((IVideoPlayerController)Element).Duration = ConvertTime(playerItem.Duration);
 
 
+                    //      CMTime cmTime = playerItem.CurrentTime;
+                    //     seconds = Double.IsNaN(seconds) ? 0 : seconds;
 
-            CMTime cmTime = ((AVPlayerViewController)ViewController).Player.CurrentTime;
-            //     seconds = Double.IsNaN(seconds) ? 0 : seconds;
-
-            ((IElementController)Element).SetValueFromRenderer(VideoPlayer.PositionProperty, ConvertTime(cmTime)); //  TimeSpan.FromSeconds(seconds));
+                    ((IElementController)Element).SetValueFromRenderer(VideoPlayer.PositionProperty, ConvertTime(playerItem.CurrentTime)); //  TimeSpan.FromSeconds(seconds));
+            }
         }
+
+
+        TimeSpan ConvertTime(CMTime cmTime)
+        {
+            return TimeSpan.FromSeconds(Double.IsNaN(cmTime.Seconds) ? 0 : cmTime.Seconds);
+
+        }
+
 
         // Event handlers to implement methods
         void OnPlayRequested(object sender, EventArgs args)
         {
-            ((AVPlayerViewController)ViewController).Player.Play();
+            player.Play();
         }
 
         void OnPauseRequested(object sender, EventArgs args)
         {
-            ((AVPlayerViewController)ViewController).Player.Pause();
+            player.Pause();
         }
 
         void OnStopRequested(object sender, EventArgs args)
         {
-            ((AVPlayerViewController)ViewController).Player.Pause();
-            ((AVPlayerViewController)ViewController).Player.Seek(new CMTime(0, 1));
+            player.Pause();
+            player.Seek(new CMTime(0, 1));
         }
     }
 }

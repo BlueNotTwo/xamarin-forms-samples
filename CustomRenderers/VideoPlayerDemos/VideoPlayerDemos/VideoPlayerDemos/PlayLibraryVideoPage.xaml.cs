@@ -1,6 +1,6 @@
 ﻿using System;
 using Xamarin.Forms;
-using MediaHelpers;
+using FormsVideoLibrary;
 
 namespace VideoPlayerDemos
 {

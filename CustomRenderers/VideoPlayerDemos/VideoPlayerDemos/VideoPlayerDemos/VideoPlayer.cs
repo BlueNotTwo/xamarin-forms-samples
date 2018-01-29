@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace MediaHelpers
+namespace FormsVideoLibrary
 {
     public class VideoPlayer : View, IVideoPlayerController
     {
@@ -20,6 +20,7 @@ namespace MediaHelpers
             });
         }
 
+        // Source property
         public static readonly BindableProperty SourceProperty =
             BindableProperty.Create("Source", typeof(VideoSource), typeof(VideoPlayer), null);
 
@@ -30,6 +31,7 @@ namespace MediaHelpers
             get { return (VideoSource)GetValue(SourceProperty); }
         }
 
+        // AutoPlay property
         public static readonly BindableProperty AutoPlayProperty =
             BindableProperty.Create("AutoPlay", typeof(bool), typeof(VideoPlayer), true);
 
@@ -39,6 +41,7 @@ namespace MediaHelpers
             get { return (bool)GetValue(AutoPlayProperty); }
         }
 
+        // AreTransportControlsEnabled property
         public static readonly BindableProperty AreTransportControlsEnabledProperty =
             BindableProperty.Create("AreTransportControlsEnabled", typeof(bool), typeof(VideoPlayer), true);
 
@@ -64,41 +67,6 @@ namespace MediaHelpers
             set { SetValue(StatusPropertyKey, value); }
             get { return Status; }
         }
-
-        // CanPause read-only property
-        private static readonly BindablePropertyKey CanPausePropertyKey =
-            BindableProperty.CreateReadOnly("CanPause", typeof(bool), typeof(VideoPlayer), false);
-
-        public static readonly BindableProperty CanPauseProperty = CanPausePropertyKey.BindableProperty;
-
-        public bool CanPause
-        {
-            get { return (bool)GetValue(CanPauseProperty); }
-        }
-
-        bool IVideoPlayerController.CanPause
-        {
-            set { SetValue(CanPausePropertyKey, value); }
-            get { return CanPause; }
-        }
-
-        // CanSeek read-only property
-        private static readonly BindablePropertyKey CanSeekPropertyKey =
-            BindableProperty.CreateReadOnly("CanSeek", typeof(bool), typeof(VideoPlayer), false);
-
-        public static readonly BindableProperty CanSeekProperty = CanSeekPropertyKey.BindableProperty;
-
-        public bool CanSeek
-        {
-            get { return (bool)GetValue(CanSeekProperty); }
-        }
-
-        bool IVideoPlayerController.CanSeek
-        {
-            set { SetValue(CanSeekPropertyKey, value); }
-            get { return CanSeek; }
-        }
-
 
         // Duration read-only property
         private static readonly BindablePropertyKey DurationPropertyKey =

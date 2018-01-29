@@ -1,16 +1,18 @@
 ﻿using System;
 using System.ComponentModel;
+
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.UWP;
 
-[assembly: ExportRenderer(typeof(MediaHelpers.VideoPlayer),
-                          typeof(MediaHelpers.UWP.VideoPlayerRenderer))]
+[assembly: ExportRenderer(typeof(FormsVideoLibrary.VideoPlayer),
+                          typeof(FormsVideoLibrary.UWP.VideoPlayerRenderer))]
 
-namespace MediaHelpers.UWP
+namespace FormsVideoLibrary.UWP
 {
     public class VideoPlayerRenderer : ViewRenderer<VideoPlayer, MediaElement>
     {
@@ -27,7 +29,7 @@ namespace MediaHelpers.UWP
                 System.Diagnostics.Debug.WriteLine("initial CurrentState = " + mediaElement.CurrentState);
             
 
-            mediaElement.MediaOpened += (sender, e) =>
+                mediaElement.MediaOpened += (sender, e) =>
                 {
                     ((IVideoPlayerController)Element).Duration = mediaElement.NaturalDuration.TimeSpan;
                 };
@@ -57,9 +59,16 @@ namespace MediaHelpers.UWP
                     ((IVideoPlayerController)Element).Status = videoStatus;
                 };
 
+                mediaElement.MediaFailed += (sender, e) =>
+                {
+
+                    ;
+
+                };
+
                 // MediaEnded, MediaFailed
 
-
+/*
                 mediaElement.RegisterPropertyChangedCallback(MediaElement.CanPauseProperty, (x, y) =>
                 {
                     ((IVideoPlayerController)Element).CanPause = mediaElement.CanPause;
@@ -69,7 +78,7 @@ namespace MediaHelpers.UWP
                 {
                     ((IVideoPlayerController)Element).CanSeek = mediaElement.CanSeek;
                 });
-
+*/
 
                 SetNativeControl(mediaElement);
             }
@@ -121,24 +130,36 @@ namespace MediaHelpers.UWP
 
         async void SetSource()
         {
-                if (Element.Source is UriVideoSource)
+            if (Element.Source is UriVideoSource)
+            {
+                string uri = (Element.Source as UriVideoSource).Uri;
+
+                if (!String.IsNullOrWhiteSpace(uri))
                 {
-                    string uriString = (Element.Source as UriVideoSource).Uri;
-                    Control.Source = new Uri(uriString);
+                    Control.Source = new Uri(uri);
                 }
-                else if (Element.Source is FileVideoSource)
+            }
+            else if (Element.Source is FileVideoSource)
+            {
+                // Code requires Pictures Library in Package.appxmanifest Capabilities to be enabled
+                string filename = (Element.Source as FileVideoSource).File;
+
+                if (!String.IsNullOrWhiteSpace(filename))
                 {
-                    // Code requires Pictures Library in Package.appxmanifest Capabilities to be enabled
-                    string filename = (Element.Source as FileVideoSource).File;
                     StorageFile storageFile = await StorageFile.GetFileFromPathAsync(filename);
                     IRandomAccessStreamWithContentType stream = await storageFile.OpenReadAsync();
                     Control.SetSource(stream, storageFile.ContentType);
                 }
-                else if (Element.Source is ResourceVideoSource)
+            }
+            else if (Element.Source is ResourceVideoSource)
+            {
+                string path = "ms-appx:///" + (Element.Source as ResourceVideoSource).Path;
+
+                if (!String.IsNullOrWhiteSpace(path))
                 {
-                    string path = "ms-appx:///" + (Element.Source as ResourceVideoSource).Path;
                     Control.Source = new Uri(path);
                 }
+            }
         }
 
         void SetAutoPlay()

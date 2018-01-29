@@ -1,7 +1,7 @@
 ﻿using System;
 using Xamarin.Forms;
 
-namespace MediaHelpers
+namespace FormsVideoLibrary
 {
     [TypeConverter(typeof(VideoSourceConverter))]
     public abstract class VideoSource : Element

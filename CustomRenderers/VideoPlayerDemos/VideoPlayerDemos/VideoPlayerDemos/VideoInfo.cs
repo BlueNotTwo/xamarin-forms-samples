@@ -1,4 +1,4 @@
-﻿using MediaHelpers;
+﻿using FormsVideoLibrary;
 
 namespace VideoPlayerDemos
 {

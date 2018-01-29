@@ -1,7 +1,7 @@
 ﻿using System;
 using Xamarin.Forms;
 
-namespace MediaHelpers
+namespace FormsVideoLibrary
 {
     public class ResourceVideoSource : VideoSource
     {

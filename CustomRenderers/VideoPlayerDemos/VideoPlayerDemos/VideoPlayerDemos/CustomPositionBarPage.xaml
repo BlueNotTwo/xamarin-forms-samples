@@ -1,8 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:local="clr-namespace:VideoPlayerDemos"
-             xmlns:media="clr-namespace:MediaHelpers"
+             xmlns:media="clr-namespace:FormsVideoLibrary"
              x:Class="VideoPlayerDemos.CustomPositionBarPage"
              Title="Custom Position Bar">
 
@@ -129,7 +128,7 @@
             }" />-->
 
 
-        <local:PositionSlider Grid.Row="3"            x:Name="slider"
+        <media:PositionSlider Grid.Row="3"            x:Name="slider"
                               
                                Duration="{Binding Source={x:Reference videoPlayer},
                                   Path=Duration}"           

@@ -1,17 +1,15 @@
 ﻿using System;
-using System.IO;
 using System.Threading.Tasks;
 
-using Foundation;
 using UIKit;
 
 using Xamarin.Forms;
 
-using MediaHelpers.iOS;
+// using FormsVideoLibrary.iOS;
 
-[assembly: Dependency(typeof(VideoPicker))]
+[assembly: Dependency(typeof(FormsVideoLibrary.iOS.VideoPicker))]
 
-namespace MediaHelpers.iOS
+namespace FormsVideoLibrary.iOS
 {
     public class VideoPicker : IVideoPicker
     {

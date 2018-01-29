@@ -1,4 +1,4 @@
-﻿namespace MediaHelpers
+﻿namespace FormsVideoLibrary
 {
     public enum VideoStatus
     {
