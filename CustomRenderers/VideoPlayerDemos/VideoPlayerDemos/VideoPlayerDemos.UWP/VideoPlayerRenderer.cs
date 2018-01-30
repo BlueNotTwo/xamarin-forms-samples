@@ -22,12 +22,7 @@ namespace FormsVideoLibrary.UWP
 
             if (Control == null)
             {
-                // NOTE: MediaPlayerElement rather than MediaElement is recommended for Windows 10 Build 1607 and later,
-
                 MediaElement mediaElement = new MediaElement();
-
-                System.Diagnostics.Debug.WriteLine("initial CurrentState = " + mediaElement.CurrentState);
-            
 
                 mediaElement.MediaOpened += (sender, e) =>
                 {
@@ -36,9 +31,7 @@ namespace FormsVideoLibrary.UWP
 
                 mediaElement.CurrentStateChanged += (sender, e) =>
                 {
-                    System.Diagnostics.Debug.WriteLine("CurrentState = " + mediaElement.CurrentState);
-
-                    VideoStatus videoStatus = VideoStatus.Unknown;
+                    VideoStatus videoStatus = VideoStatus.NotReady;
 
                     switch (mediaElement.CurrentState)
                     {
@@ -50,35 +43,10 @@ namespace FormsVideoLibrary.UWP
                         case MediaElementState.Stopped:
                             videoStatus = VideoStatus.Paused;
                             break;
-
-                        default:
-                            videoStatus = VideoStatus.NotReady;
-                            break;
                     }
 
                     ((IVideoPlayerController)Element).Status = videoStatus;
                 };
-
-                mediaElement.MediaFailed += (sender, e) =>
-                {
-
-                    ;
-
-                };
-
-                // MediaEnded, MediaFailed
-
-/*
-                mediaElement.RegisterPropertyChangedCallback(MediaElement.CanPauseProperty, (x, y) =>
-                {
-                    ((IVideoPlayerController)Element).CanPause = mediaElement.CanPause;
-                });
-
-                mediaElement.RegisterPropertyChangedCallback(MediaElement.CanSeekProperty, (x, y) =>
-                {
-                    ((IVideoPlayerController)Element).CanSeek = mediaElement.CanSeek;
-                });
-*/
 
                 SetNativeControl(mediaElement);
             }
@@ -86,7 +54,6 @@ namespace FormsVideoLibrary.UWP
             if (args.OldElement != null)
             {
                 args.OldElement.UpdateStatus -= OnUpdateStatus;
-
                 args.OldElement.PlayRequested -= OnPlayRequested;
                 args.OldElement.PauseRequested -= OnPauseRequested;
                 args.OldElement.StopRequested -= OnStopRequested;
@@ -94,12 +61,11 @@ namespace FormsVideoLibrary.UWP
 
             if (args.NewElement != null)
             {
+                SetAreTransportControlsEnabled();
                 SetSource();
                 SetAutoPlay();
-                SetAreTransportControlsEnabled();
 
                 args.NewElement.UpdateStatus += OnUpdateStatus;
-
                 args.NewElement.PlayRequested += OnPlayRequested;
                 args.NewElement.PauseRequested += OnPauseRequested;
                 args.NewElement.StopRequested += OnStopRequested;
@@ -110,7 +76,11 @@ namespace FormsVideoLibrary.UWP
         {
             base.OnElementPropertyChanged(sender, args);
 
-            if (args.PropertyName == VideoPlayer.SourceProperty.PropertyName)
+            if (args.PropertyName == VideoPlayer.AreTransportControlsEnabledProperty.PropertyName)
+            {
+                SetAreTransportControlsEnabled();
+            }
+            else if (args.PropertyName == VideoPlayer.SourceProperty.PropertyName)
             {
                 SetSource();
             }
@@ -118,14 +88,15 @@ namespace FormsVideoLibrary.UWP
             {
                 SetAutoPlay();
             }
-            else if (args.PropertyName == VideoPlayer.AreTransportControlsEnabledProperty.PropertyName)
-            {
-                SetAreTransportControlsEnabled();
-            }
             else if (args.PropertyName == VideoPlayer.PositionProperty.PropertyName)
             {
                 SetPosition();
             }
+        }
+
+        void SetAreTransportControlsEnabled()
+        {
+            Control.AreTransportControlsEnabled = Element.AreTransportControlsEnabled;
         }
 
         async void SetSource()
@@ -165,11 +136,6 @@ namespace FormsVideoLibrary.UWP
         void SetAutoPlay()
         {
             Control.AutoPlay = Element.AutoPlay;
-        }
-
-        void SetAreTransportControlsEnabled()
-        {
-            Control.AreTransportControlsEnabled = Element.AreTransportControlsEnabled;
         }
 
         void SetPosition()

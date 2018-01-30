@@ -40,11 +40,16 @@ namespace FormsVideoLibrary.Droid
                 layoutParams.AddRule(LayoutRules.CenterInParent);
                 videoView.LayoutParameters = layoutParams;
 
-                // Handle some VideoView events
-                videoView.Prepared += OnVideoViewPrepared;
-                videoView.Info += OnVideoViewInfo;
-                videoView.Completion += OnVideoViewCompletion;
-                videoView.Error += OnVideoViewError;
+                // Handle a VideoView event
+                videoView.Prepared += (sender, e) =>
+                {
+                    isPrepared = true;
+                    ((IVideoPlayerController)Element).Duration = TimeSpan.FromMilliseconds(videoView.Duration);
+                };
+
+       //         videoView.Info += OnVideoViewInfo;
+        //        videoView.Completion += OnVideoViewCompletion;
+        //        videoView.Error += OnVideoViewError;
 
                 // Use the RelativeLayout as the native control
                 SetNativeControl(relativeLayout);
@@ -60,8 +65,8 @@ namespace FormsVideoLibrary.Droid
 
             if (args.NewElement != null)
             {
-                SetSource();
                 SetAreTransportControlsEnabled();
+                SetSource();
 
                 args.NewElement.UpdateStatus += OnUpdateStatus;
                 args.NewElement.PlayRequested += OnPlayRequested;
@@ -69,7 +74,7 @@ namespace FormsVideoLibrary.Droid
                 args.NewElement.StopRequested += OnStopRequested;
             }
         }
-
+/*
         // VideoView event handlers
         private void OnVideoViewPrepared(object sender, EventArgs args)
         {
@@ -94,22 +99,45 @@ namespace FormsVideoLibrary.Droid
         {
             System.Diagnostics.Debug.WriteLine("Error: {0}", args.What); 
         }
-
+*/
         protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs args)
         {
             base.OnElementPropertyChanged(sender, args);
 
-            if (args.PropertyName == VideoPlayer.SourceProperty.PropertyName)
-            {
-                SetSource();
-            }
-            else if (args.PropertyName == VideoPlayer.AreTransportControlsEnabledProperty.PropertyName)
+            if (args.PropertyName == VideoPlayer.AreTransportControlsEnabledProperty.PropertyName)
             {
                 SetAreTransportControlsEnabled();
             }
+            else if (args.PropertyName == VideoPlayer.SourceProperty.PropertyName)
+            {
+                SetSource();
+            }
             else if (args.PropertyName == VideoPlayer.PositionProperty.PropertyName)
             {
-                SetPosition();
+                if (Math.Abs(videoView.CurrentPosition - Element.Position.TotalMilliseconds) > 1000)
+                {
+                    videoView.SeekTo((int)Element.Position.TotalMilliseconds);
+                }
+            }
+        }
+
+        void SetAreTransportControlsEnabled()
+        {
+            if (Element.AreTransportControlsEnabled)
+            {
+                mediaController = new MediaController(Context);
+                mediaController.SetMediaPlayer(videoView);
+                videoView.SetMediaController(mediaController);
+            }
+            else
+            {
+                videoView.SetMediaController(null);
+
+                if (mediaController != null)
+                {
+                    mediaController.SetMediaPlayer(null);
+                    mediaController = null;
+                }
             }
         }
 
@@ -151,78 +179,32 @@ namespace FormsVideoLibrary.Droid
                     hasSetSource = true;
                 }
             }
-
-                
-
-            // TODO: Is there an AutoPlay property to use instead of this logic?
+              
             if (hasSetSource && Element.AutoPlay)
             {
                 videoView.Start();
             }
         }
 
-        void SetAreTransportControlsEnabled()
-        {
-            if (Element.AreTransportControlsEnabled)
-            {
-                mediaController = new MediaController(Context);
-                // SetAnchorView and SetMediaPlayer seem to have the same effect 
-                //     mediaController.SetAnchorView(videoView);
-                mediaController.SetMediaPlayer(videoView);
-                videoView.SetMediaController(mediaController);
-            }
-            else
-            {
-                videoView.SetMediaController(null);
-
-                if (mediaController != null)
-                {
-                    mediaController.SetMediaPlayer(null);
-                    mediaController = null;
-                }
-            }
-        }
-
-        // TODO: Can Move up 
-        void SetPosition()
-        {
-            if (Math.Abs(videoView.CurrentPosition - Element.Position.TotalMilliseconds) > 1000)
-            {
-                videoView.SeekTo((int)Element.Position.TotalMilliseconds);
-            }
-        }
-
-
-        bool isPlaying = false;
+ //       bool isPlaying = false;
 
         // Event handler to update status
         void OnUpdateStatus(object sender, EventArgs args)
         {
-//             if (videoView != null && Element != null)
+            VideoStatus status = VideoStatus.NotReady;
+
+            if (isPrepared)
             {
-                if (isPlaying != videoView.IsPlaying)
-                {
-                    isPlaying = videoView.IsPlaying;
-                    System.Diagnostics.Debug.WriteLine("IsPlaying = {0}", isPlaying);
-                }
-
-                VideoStatus status = VideoStatus.NotReady;
-
-                if (isPrepared)
-                {
-                    status = isPlaying ? VideoStatus.Playing : VideoStatus.Paused;
-                }
-
-                ((IVideoPlayerController)Element).Status = status;
-
-
-
-
-
-
-                TimeSpan timeSpan = TimeSpan.FromMilliseconds(videoView.CurrentPosition);
-                ((IElementController)Element).SetValueFromRenderer(VideoPlayer.PositionProperty, timeSpan);
+                status = videoView.IsPlaying ? VideoStatus.Playing : VideoStatus.Paused;
             }
+
+                if (Element != null)            // Why? This is detached when Element becomes null!
+                {
+                    ((IVideoPlayerController)Element).Status = status;
+                    TimeSpan timeSpan = TimeSpan.FromMilliseconds(videoView.CurrentPosition);
+                    ((IElementController)Element).SetValueFromRenderer(VideoPlayer.PositionProperty, timeSpan);
+                }
+            
         }
 
         // Event handlers to implement methods

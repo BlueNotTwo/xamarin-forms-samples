@@ -7,8 +7,6 @@ namespace FormsVideoLibrary
     {
         public override object ConvertFromInvariantString(string value)
         {
-            System.Diagnostics.Debug.WriteLine("String equals " + value);
-
             if (!String.IsNullOrWhiteSpace(value))
             {
                 Uri uri;

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:media="clr-namespace:FormsVideoLibrary"
+             xmlns:video="clr-namespace:FormsVideoLibrary"
              x:Class="VideoPlayerDemos.CustomPositionBarPage"
              Title="Custom Position Bar">
 
@@ -15,7 +15,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <media:VideoPlayer x:Name="videoPlayer"
+        <video:VideoPlayer x:Name="videoPlayer"
                            Grid.Row="0"                 BackgroundColor="Aqua"         
                            AutoPlay="False" 
                            AreTransportControlsEnabled="True"
@@ -25,30 +25,30 @@
                            
                            >
 
-            <!--<media:VideoPlayer.Source>
-                <media:UriVideoSource Uri="{StaticResource ElephantsDream}" />
-            </media:VideoPlayer.Source>-->
+            <!--<video:VideoPlayer.Source>
+                <video:UriVideoSource Uri="{StaticResource ElephantsDream}" />
+            </video:VideoPlayer.Source>-->
 
-            <!--<media:VideoPlayer.Source>
-                <media:ResourceVideoSource>
-                    <media:ResourceVideoSource.Path>
+            <!--<video:VideoPlayer.Source>
+                <video:ResourceVideoSource>
+                    <video:ResourceVideoSource.Path>
                         <OnPlatform x:TypeArguments="x:String">
                             <On Platform="iOS" Value="Videos/VideoInFolder.mp4" />
                             <On Platform="Android" Value="AndroidVideo.mp4" />
                             <On Platform="Windows" Value="Videos/WinVideo.mp4" />
                         </OnPlatform>
-                    </media:ResourceVideoSource.Path>
-                </media:ResourceVideoSource>
-            </media:VideoPlayer.Source>-->
+                    </video:ResourceVideoSource.Path>
+                </video:ResourceVideoSource>
+            </video:VideoPlayer.Source>-->
 
 
-        </media:VideoPlayer>
+        </video:VideoPlayer>
 
         <StackLayout Grid.Row="1"
                      Orientation="Horizontal">
 
 
-            <Label Text="{Binding Source={x:Static media:VideoStatus.Playing}, StringFormat='{0}'}" />
+            <Label Text="{Binding Source={x:Static video:VideoStatus.Playing}, StringFormat='{0}'}" />
 
             <!--<Button Text="&#x25B6; Play"
                     Clicked="OnPlayButtonClicked" />
@@ -62,7 +62,7 @@
                     <DataTrigger TargetType="Button"
                                  Binding="{Binding Source={x:Reference videoPlayer},
                                                    Path=Status}"
-                                 Value="{x:Static media:VideoStatus.Playing}">
+                                 Value="{x:Static video:VideoStatus.Playing}">
                         <Setter Property="Text" Value="&#x23F8; Pause" />
                     </DataTrigger>
 
@@ -71,7 +71,7 @@
 
                             <BindingCondition Binding="{Binding Source={x:Reference videoPlayer},
                                                                 Path=Status}"
-                                              Value="{x:Static media:VideoStatus.NotReady}" />
+                                              Value="{x:Static video:VideoStatus.NotReady}" />
 
                         </MultiTrigger.Conditions>
 
@@ -83,7 +83,7 @@
                     <!--<DataTrigger TargetType="Button"
                                  Binding="{Binding Source={x:Reference videoPlayer},
                                                    Path=Status}"
-                                 Value="{x:Static media:VideoStatus.NotReady}">
+                                 Value="{x:Static video:VideoStatus.NotReady}">
                         <Setter Property="IsEnabled" Value="False" />
                     </DataTrigger>-->
                 </Button.Triggers>
@@ -128,7 +128,7 @@
             }" />-->
 
 
-        <media:PositionSlider Grid.Row="3"            x:Name="slider"
+        <video:PositionSlider Grid.Row="3"            x:Name="slider"
                               
                                Duration="{Binding Source={x:Reference videoPlayer},
                                   Path=Duration}"           

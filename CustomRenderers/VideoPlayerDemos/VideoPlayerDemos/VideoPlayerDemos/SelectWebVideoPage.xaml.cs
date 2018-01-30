@@ -17,10 +17,6 @@ namespace VideoPlayerDemos
             InitializeComponent();
         }
 
-
-        // TODO: Do it with binding as well? 
-
-
         void OnListViewItemSelected(object sender, SelectedItemChangedEventArgs args)
         {
             if (args.SelectedItem != null)

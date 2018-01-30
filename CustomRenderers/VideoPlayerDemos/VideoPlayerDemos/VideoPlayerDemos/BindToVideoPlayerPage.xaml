@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:VideoPlayerDemos"
-             xmlns:media="clr-namespace:FormsVideoLibrary"
+             xmlns:video="clr-namespace:FormsVideoLibrary"
              x:Class="VideoPlayerDemos.BindToVideoPlayerPage"
              Title="Bind to VideoPlayer">
     <Grid>
@@ -11,19 +11,19 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <media:VideoPlayer x:Name="videoPlayer"
+        <video:VideoPlayer x:Name="videoPlayer"
                            Grid.Row="0"
                            Source="{Binding Source={x:Reference listView},
                                             Path=SelectedItem.VideoSource}"
                            >
-            <!--<media:VideoPlayer.Source>-->
+            <!--<video:VideoPlayer.Source>-->
                 
                 <!-- This is not causing the VideoPlayer to recognize a change in the Source property -->
                 
-                <!--<media:UriVideoSource Uri="{Binding Source={x:Reference listView},
+                <!--<video:UriVideoSource Uri="{Binding Source={x:Reference listView},
                                                     Path=SelectedItem.Uri}" />
-            </media:VideoPlayer.Source>-->
-        </media:VideoPlayer>
+            </video:VideoPlayer.Source>-->
+        </video:VideoPlayer>
 
         <ListView x:Name="listView"
                   Grid.Row="1">

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace FormsVideoLibrary
@@ -18,6 +14,16 @@ namespace FormsVideoLibrary
                 UpdateStatus?.Invoke(this, EventArgs.Empty);
                 return true;
             });
+        }
+
+        // AreTransportControlsEnabled property
+        public static readonly BindableProperty AreTransportControlsEnabledProperty =
+            BindableProperty.Create("AreTransportControlsEnabled", typeof(bool), typeof(VideoPlayer), true);
+
+        public bool AreTransportControlsEnabled
+        {
+            set { SetValue(AreTransportControlsEnabledProperty, value); }
+            get { return (bool)GetValue(AreTransportControlsEnabledProperty); }
         }
 
         // Source property
@@ -41,19 +47,9 @@ namespace FormsVideoLibrary
             get { return (bool)GetValue(AutoPlayProperty); }
         }
 
-        // AreTransportControlsEnabled property
-        public static readonly BindableProperty AreTransportControlsEnabledProperty =
-            BindableProperty.Create("AreTransportControlsEnabled", typeof(bool), typeof(VideoPlayer), true);
-
-        public bool AreTransportControlsEnabled
-        {
-            set { SetValue(AreTransportControlsEnabledProperty, value); }
-            get { return (bool)GetValue(AreTransportControlsEnabledProperty); }
-        }
-
         // Status read-only property
         private static readonly BindablePropertyKey StatusPropertyKey =
-            BindableProperty.CreateReadOnly("Status", typeof(VideoStatus), typeof(VideoPlayer), VideoStatus.Unknown);
+            BindableProperty.CreateReadOnly("Status", typeof(VideoStatus), typeof(VideoPlayer), VideoStatus.NotReady);
 
         public static readonly BindableProperty StatusProperty = StatusPropertyKey.BindableProperty;
 
