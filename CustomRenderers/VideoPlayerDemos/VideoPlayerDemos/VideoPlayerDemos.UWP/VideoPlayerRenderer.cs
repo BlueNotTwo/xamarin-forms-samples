@@ -3,6 +3,7 @@ using System.ComponentModel;
 
 using Windows.Storage;
 using Windows.Storage.Streams;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
@@ -20,47 +21,17 @@ namespace FormsVideoLibrary.UWP
         {
             base.OnElementChanged(args);
 
-            if (Control == null)
-            {
-                MediaElement mediaElement = new MediaElement();
-
-                mediaElement.MediaOpened += (sender, e) =>
-                {
-                    ((IVideoPlayerController)Element).Duration = mediaElement.NaturalDuration.TimeSpan;
-                };
-
-                mediaElement.CurrentStateChanged += (sender, e) =>
-                {
-                    VideoStatus videoStatus = VideoStatus.NotReady;
-
-                    switch (mediaElement.CurrentState)
-                    {
-                        case MediaElementState.Playing:
-                            videoStatus = VideoStatus.Playing;
-                            break;
-
-                        case MediaElementState.Paused:
-                        case MediaElementState.Stopped:
-                            videoStatus = VideoStatus.Paused;
-                            break;
-                    }
-
-                    ((IVideoPlayerController)Element).Status = videoStatus;
-                };
-
-                SetNativeControl(mediaElement);
-            }
-
-            if (args.OldElement != null)
-            {
-                args.OldElement.UpdateStatus -= OnUpdateStatus;
-                args.OldElement.PlayRequested -= OnPlayRequested;
-                args.OldElement.PauseRequested -= OnPauseRequested;
-                args.OldElement.StopRequested -= OnStopRequested;
-            }
-
             if (args.NewElement != null)
             {
+                if (Control == null)
+                {
+                    MediaElement mediaElement = new MediaElement();
+                    SetNativeControl(mediaElement);
+
+                    mediaElement.MediaOpened += OnMediaElementMediaOpened;
+                    mediaElement.CurrentStateChanged += OnMediaElementCurrentStateChanged;
+                }
+
                 SetAreTransportControlsEnabled();
                 SetSource();
                 SetAutoPlay();
@@ -70,6 +41,49 @@ namespace FormsVideoLibrary.UWP
                 args.NewElement.PauseRequested += OnPauseRequested;
                 args.NewElement.StopRequested += OnStopRequested;
             }
+
+            if (args.OldElement != null)
+            {
+                args.OldElement.UpdateStatus -= OnUpdateStatus;
+                args.OldElement.PlayRequested -= OnPlayRequested;
+                args.OldElement.PauseRequested -= OnPauseRequested;
+                args.OldElement.StopRequested -= OnStopRequested;
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (Control != null)
+            {
+                Control.MediaOpened -= OnMediaElementMediaOpened;
+                Control.CurrentStateChanged -= OnMediaElementCurrentStateChanged;
+            }
+
+            base.Dispose(disposing);
+        }
+
+        void OnMediaElementMediaOpened(object sender, RoutedEventArgs args)
+        {
+            ((IVideoPlayerController)Element).Duration = Control.NaturalDuration.TimeSpan;
+        }
+
+        void OnMediaElementCurrentStateChanged(object sender, RoutedEventArgs args)
+        {
+            VideoStatus videoStatus = VideoStatus.NotReady;
+
+            switch (Control.CurrentState)
+            {
+                case MediaElementState.Playing:
+                    videoStatus = VideoStatus.Playing;
+                    break;
+
+                case MediaElementState.Paused:
+                case MediaElementState.Stopped:
+                    videoStatus = VideoStatus.Paused;
+                    break;
+            }
+
+            ((IVideoPlayerController)Element).Status = videoStatus;
         }
 
         protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs args)
@@ -90,7 +104,10 @@ namespace FormsVideoLibrary.UWP
             }
             else if (args.PropertyName == VideoPlayer.PositionProperty.PropertyName)
             {
-                SetPosition();
+                if (Math.Abs((Control.Position - Element.Position).TotalSeconds) > 1)
+                {
+                    Control.Position = Element.Position;
+                }
             }
         }
 
@@ -136,14 +153,6 @@ namespace FormsVideoLibrary.UWP
         void SetAutoPlay()
         {
             Control.AutoPlay = Element.AutoPlay;
-        }
-
-        void SetPosition()
-        {
-            if (Math.Abs((Control.Position - Element.Position).TotalSeconds) > 1)
-            {
-                Control.Position = Element.Position;
-            }
         }
 
         // Event handler to update status

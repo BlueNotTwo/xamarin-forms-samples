@@ -4,21 +4,17 @@
              xmlns:video="clr-namespace:FormsVideoLibrary"
              x:Class="VideoPlayerDemos.PlayVideoResourcePage"
              Title="Play Video Resource">
-    
-    <!-- TODO: Redo videos, change names -->
-
     <video:VideoPlayer>
         <video:VideoPlayer.Source>
             <video:ResourceVideoSource>
                 <video:ResourceVideoSource.Path>
                     <OnPlatform x:TypeArguments="x:String">
-                        <On Platform="iOS" Value="Videos/VideoInFolder.mp4" />
-                        <On Platform="Android" Value="AndroidVideo.mp4" />
-                        <On Platform="Windows" Value="Videos/WinVideo.mp4" />
+                        <On Platform="iOS" Value="Videos/FindiosApi.mp4" />
+                        <On Platform="Android" Value="FindAndroidApi.mp4" />
+                        <On Platform="UWP" Value="Videos/FindUwpApi.mp4" />
                     </OnPlatform>
                 </video:ResourceVideoSource.Path>
             </video:ResourceVideoSource>
         </video:VideoPlayer.Source>
     </video:VideoPlayer>
-    
 </ContentPage>

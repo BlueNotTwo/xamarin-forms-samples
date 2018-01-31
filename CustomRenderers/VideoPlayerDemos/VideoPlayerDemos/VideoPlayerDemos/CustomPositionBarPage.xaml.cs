@@ -11,7 +11,6 @@ namespace VideoPlayerDemos
             InitializeComponent();
         }
 
-
         void OnPlayPauseButtonClicked(object sender, EventArgs args)
         {
             if (videoPlayer.Status == VideoStatus.Playing)
@@ -24,12 +23,9 @@ namespace VideoPlayerDemos
             }
         }
 
-
         void OnStopButtonClicked(object sender, EventArgs args)
         {
             videoPlayer.Stop();
         }
-
-
     }
 }

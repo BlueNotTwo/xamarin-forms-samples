@@ -34,12 +34,12 @@
                           CommandParameter="{x:Type local:PlayLibraryVideoPage}" />
 
                 <TextCell Text="Custom Transport"
-                          
+                          Detail="Play a video with custom Play and Pause buttons"
                           Command="{Binding NavigateCommand}"
                           CommandParameter="{x:Type local:CustomTransportPage}" />
 
                 <TextCell Text="Custom Position Bar"
-                          
+                          Detail="Play a video with a custom position bar"
                           Command="{Binding NavigateCommand}"
                           CommandParameter="{x:Type local:CustomPositionBarPage}" />
             </TableSection>

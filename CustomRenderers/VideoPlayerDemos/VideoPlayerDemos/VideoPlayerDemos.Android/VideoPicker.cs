@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-
 using Android.Content;
-
 using Xamarin.Forms;
 
 // Need application's MainActivity
@@ -22,7 +20,7 @@ namespace FormsVideoLibrary.Droid
             intent.SetAction(Intent.ActionGetContent);
 
             // Get the MainActivity instance
-            MainActivity activity = Forms.Context as MainActivity;
+            MainActivity activity = MainActivity.Current;
 
             // Start the picture-picker activity (resumes in MainActivity.cs)
             activity.StartActivityForResult(

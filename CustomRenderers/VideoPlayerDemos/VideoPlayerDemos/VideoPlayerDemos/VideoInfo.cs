@@ -6,11 +6,6 @@ namespace VideoPlayerDemos
     {
         public string DisplayName { set; get; }
 
-
-        // TODO: Remove this!
-        public string Uri { set; get; }
-
-
         public VideoSource VideoSource { set; get; }
 
         public override string ToString()

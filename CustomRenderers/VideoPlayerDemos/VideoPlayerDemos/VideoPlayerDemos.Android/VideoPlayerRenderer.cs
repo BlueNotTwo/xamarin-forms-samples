@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.IO;
 
 using Android.Content;
-using Android.Media;
 using Android.Widget;
 using ARelativeLayout = Android.Widget.RelativeLayout;
 
@@ -21,38 +20,44 @@ namespace FormsVideoLibrary.Droid
         MediaController mediaController;    // Used to display transport controls
         bool isPrepared;
 
+        public VideoPlayerRenderer(Context context) : base(context)
+        {
+        }
+
         protected override void OnElementChanged(ElementChangedEventArgs<VideoPlayer> args)
         {
             base.OnElementChanged(args);
 
-            if (Control == null)
+            if (args.NewElement != null)
             {
-                // Save the VideoView for future reference
-                videoView = new VideoView(Context);
-
-                // Put the VideoView in a RelativeLayout
-                ARelativeLayout relativeLayout = new ARelativeLayout(Context);
-                relativeLayout.AddView(videoView);
-
-                // Center the VideoView in the RelativeLayout
-                ARelativeLayout.LayoutParams layoutParams =
-                    new ARelativeLayout.LayoutParams(LayoutParams.MatchParent, LayoutParams.MatchParent);
-                layoutParams.AddRule(LayoutRules.CenterInParent);
-                videoView.LayoutParameters = layoutParams;
-
-                // Handle a VideoView event
-                videoView.Prepared += (sender, e) =>
+                if (Control == null)
                 {
-                    isPrepared = true;
-                    ((IVideoPlayerController)Element).Duration = TimeSpan.FromMilliseconds(videoView.Duration);
-                };
+                    // Save the VideoView for future reference
+                    videoView = new VideoView(Context);
 
-       //         videoView.Info += OnVideoViewInfo;
-        //        videoView.Completion += OnVideoViewCompletion;
-        //        videoView.Error += OnVideoViewError;
+                    // Put the VideoView in a RelativeLayout
+                    ARelativeLayout relativeLayout = new ARelativeLayout(Context);
+                    relativeLayout.AddView(videoView);
 
-                // Use the RelativeLayout as the native control
-                SetNativeControl(relativeLayout);
+                    // Center the VideoView in the RelativeLayout
+                    ARelativeLayout.LayoutParams layoutParams =
+                        new ARelativeLayout.LayoutParams(LayoutParams.MatchParent, LayoutParams.MatchParent);
+                    layoutParams.AddRule(LayoutRules.CenterInParent);
+                    videoView.LayoutParameters = layoutParams;
+
+                    // Handle a VideoView event
+                    videoView.Prepared += OnVideoViewPrepared;
+
+                    SetNativeControl(relativeLayout);
+                }
+
+                SetAreTransportControlsEnabled();
+                SetSource();
+
+                args.NewElement.UpdateStatus += OnUpdateStatus;
+                args.NewElement.PlayRequested += OnPlayRequested;
+                args.NewElement.PauseRequested += OnPauseRequested;
+                args.NewElement.StopRequested += OnStopRequested;
             }
 
             if (args.OldElement != null)
@@ -62,44 +67,23 @@ namespace FormsVideoLibrary.Droid
                 args.OldElement.PauseRequested -= OnPauseRequested;
                 args.OldElement.StopRequested -= OnStopRequested;
             }
-
-            if (args.NewElement != null)
-            {
-                SetAreTransportControlsEnabled();
-                SetSource();
-
-                args.NewElement.UpdateStatus += OnUpdateStatus;
-                args.NewElement.PlayRequested += OnPlayRequested;
-                args.NewElement.PauseRequested += OnPauseRequested;
-                args.NewElement.StopRequested += OnStopRequested;
-            }
         }
-/*
-        // VideoView event handlers
-        private void OnVideoViewPrepared(object sender, EventArgs args)
+
+        protected override void Dispose(bool disposing)
         {
-            System.Diagnostics.Debug.WriteLine("Prepared!");
+            if (Control != null && videoView != null)
+            {
+                videoView.Prepared -= OnVideoViewPrepared;
+            }
+            base.Dispose(disposing);
+        }
 
+        void OnVideoViewPrepared(object sender, EventArgs args)
+        {
             isPrepared = true;
-
             ((IVideoPlayerController)Element).Duration = TimeSpan.FromMilliseconds(videoView.Duration);
         }
 
-        private void OnVideoViewInfo(object sender, MediaPlayer.InfoEventArgs args)
-        {
-            System.Diagnostics.Debug.WriteLine("Info: {0}", args.What);
-        }
-
-        private void OnVideoViewCompletion(object sender, EventArgs args)
-        {
-            System.Diagnostics.Debug.WriteLine("Completion!");
-        }
-
-        private void OnVideoViewError(object sender, MediaPlayer.ErrorEventArgs args)
-        {
-            System.Diagnostics.Debug.WriteLine("Error: {0}", args.What); 
-        }
-*/
         protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs args)
         {
             base.OnElementPropertyChanged(sender, args);
@@ -186,8 +170,6 @@ namespace FormsVideoLibrary.Droid
             }
         }
 
- //       bool isPlaying = false;
-
         // Event handler to update status
         void OnUpdateStatus(object sender, EventArgs args)
         {
@@ -198,13 +180,11 @@ namespace FormsVideoLibrary.Droid
                 status = videoView.IsPlaying ? VideoStatus.Playing : VideoStatus.Paused;
             }
 
-                if (Element != null)            // Why? This is detached when Element becomes null!
-                {
-                    ((IVideoPlayerController)Element).Status = status;
-                    TimeSpan timeSpan = TimeSpan.FromMilliseconds(videoView.CurrentPosition);
-                    ((IElementController)Element).SetValueFromRenderer(VideoPlayer.PositionProperty, timeSpan);
-                }
-            
+            ((IVideoPlayerController)Element).Status = status;
+
+            // Set Position property
+            TimeSpan timeSpan = TimeSpan.FromMilliseconds(videoView.CurrentPosition);
+            ((IElementController)Element).SetValueFromRenderer(VideoPlayer.PositionProperty, timeSpan);
         }
 
         // Event handlers to implement methods

@@ -14,16 +14,7 @@
         <video:VideoPlayer x:Name="videoPlayer"
                            Grid.Row="0"
                            Source="{Binding Source={x:Reference listView},
-                                            Path=SelectedItem.VideoSource}"
-                           >
-            <!--<video:VideoPlayer.Source>-->
-                
-                <!-- This is not causing the VideoPlayer to recognize a change in the Source property -->
-                
-                <!--<video:UriVideoSource Uri="{Binding Source={x:Reference listView},
-                                                    Path=SelectedItem.Uri}" />
-            </video:VideoPlayer.Source>-->
-        </video:VideoPlayer>
+                                            Path=SelectedItem.VideoSource}" />
 
         <ListView x:Name="listView"
                   Grid.Row="1">

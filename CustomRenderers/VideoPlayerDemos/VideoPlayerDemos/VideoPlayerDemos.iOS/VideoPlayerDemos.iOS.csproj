@@ -152,7 +152,7 @@
     <BundleResource Include="Resources\iosvideo.mp4" />
   </ItemGroup>
   <ItemGroup>
-    <BundleResource Include="Resources\Videos\VideoInFolder.mp4" />
+    <BundleResource Include="Resources\Videos\FindiosApi.mp4" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

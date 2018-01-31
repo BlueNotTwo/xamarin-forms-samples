@@ -16,6 +16,8 @@ namespace VideoPlayerDemos.Droid
     {
         protected override void OnCreate(Bundle bundle)
         {
+            Current = this;
+
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
 
@@ -25,7 +27,9 @@ namespace VideoPlayerDemos.Droid
             LoadApplication(new App());
         }
 
-        // Field, property, and method for Video Picker
+        // Field, properties, and method for Video Picker
+        public static MainActivity Current { private set; get; }
+
         public static readonly int PickImageId = 1000;
 
         public TaskCompletionSource<string> PickImageTaskCompletionSource { set; get; }

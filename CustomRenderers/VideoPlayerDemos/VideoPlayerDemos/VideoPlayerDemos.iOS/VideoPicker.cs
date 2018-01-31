@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-
 using UIKit;
-
 using Xamarin.Forms;
-
-// using FormsVideoLibrary.iOS;
 
 [assembly: Dependency(typeof(FormsVideoLibrary.iOS.VideoPicker))]
 

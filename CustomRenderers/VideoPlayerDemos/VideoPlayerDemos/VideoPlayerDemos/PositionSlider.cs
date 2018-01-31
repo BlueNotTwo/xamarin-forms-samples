@@ -9,9 +9,8 @@ namespace FormsVideoLibrary
             BindableProperty.Create("Duration", typeof(TimeSpan), typeof(PositionSlider), new TimeSpan(1),
                                     propertyChanged: (bindable, oldValue, newValue) =>
                                     {
-                                        PositionSlider slider = (PositionSlider)bindable;
                                         double seconds = ((TimeSpan)newValue).TotalSeconds;
-                                        slider.Maximum = seconds <= 0 ? 1 : seconds; 
+                                        ((Slider)bindable).Maximum = seconds <= 0 ? 1 : seconds; 
                                     });
 
         public TimeSpan Duration
@@ -25,9 +24,8 @@ namespace FormsVideoLibrary
                                     defaultBindingMode: BindingMode.TwoWay,
                                     propertyChanged: (bindable, oldValue, newValue) =>
                                     {
-                                        PositionSlider slider = (PositionSlider)bindable;
                                         double seconds = ((TimeSpan)newValue).TotalSeconds;
-                                        slider.Value = seconds;
+                                        ((Slider)bindable).Value = seconds;
                                     });
 
         public TimeSpan Position
@@ -40,11 +38,11 @@ namespace FormsVideoLibrary
         {
             PropertyChanged += (sender, args) =>
             {
-                if (args.PropertyName == Slider.ValueProperty.PropertyName)
+                if (args.PropertyName == "Value")
                 {
                     TimeSpan newPosition = TimeSpan.FromSeconds(Value);
 
-                    if (Math.Abs(newPosition.Seconds - Position.Seconds) / Duration.Seconds > 0.01)
+                    if (Math.Abs(newPosition.TotalSeconds - Position.TotalSeconds) / Duration.TotalSeconds > 0.01)
                     {
                         Position = newPosition;
                     }

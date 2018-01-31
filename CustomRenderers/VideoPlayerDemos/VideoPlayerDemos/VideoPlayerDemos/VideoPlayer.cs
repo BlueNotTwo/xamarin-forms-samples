@@ -66,7 +66,8 @@ namespace FormsVideoLibrary
 
         // Duration read-only property
         private static readonly BindablePropertyKey DurationPropertyKey =
-            BindableProperty.CreateReadOnly("Duration", typeof(TimeSpan), typeof(VideoPlayer), new TimeSpan());
+            BindableProperty.CreateReadOnly("Duration", typeof(TimeSpan), typeof(VideoPlayer), new TimeSpan(),
+                propertyChanged: (bindable, oldValue, newValue) => ((VideoPlayer)bindable).SetTimeToEnd());
 
         public static readonly BindableProperty DurationProperty = DurationPropertyKey.BindableProperty;
 
@@ -83,12 +84,30 @@ namespace FormsVideoLibrary
 
         // Position property
         public static readonly BindableProperty PositionProperty =
-            BindableProperty.Create("Position", typeof(TimeSpan), typeof(VideoPlayer), new TimeSpan());
+            BindableProperty.Create("Position", typeof(TimeSpan), typeof(VideoPlayer), new TimeSpan(),
+                propertyChanged: (bindable, oldValue, newValue) => ((VideoPlayer)bindable).SetTimeToEnd());
 
         public TimeSpan Position
         {
             set { SetValue(PositionProperty, value); }
             get { return (TimeSpan)GetValue(PositionProperty); }
+        }
+
+        // TimeToEnd property
+        private static readonly BindablePropertyKey TimeToEndPropertyKey =
+            BindableProperty.CreateReadOnly("TimeToEnd", typeof(TimeSpan), typeof(VideoPlayer), new TimeSpan());
+
+        public static readonly BindableProperty TimeToEndProperty = TimeToEndPropertyKey.BindableProperty;
+
+        public TimeSpan TimeToEnd
+        {
+            private set { SetValue(TimeToEndPropertyKey, value); }
+            get { return (TimeSpan)GetValue(TimeToEndProperty); }
+        }
+
+        void SetTimeToEnd()
+        {
+            TimeToEnd = Duration - Position;
         }
 
         // Methods handled by renderers

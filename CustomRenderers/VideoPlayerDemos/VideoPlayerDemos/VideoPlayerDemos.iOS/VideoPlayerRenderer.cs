@@ -28,19 +28,30 @@ namespace FormsVideoLibrary.iOS
         {
             base.OnElementChanged(args);
 
-            if (Control == null)
+            if (args.NewElement != null)
             {
-                // Create AVPlayerViewController
-                _playerViewController = new AVPlayerViewController();
+                if (Control == null)
+                {
+                    // Create AVPlayerViewController
+                    _playerViewController = new AVPlayerViewController();
 
-                // Set Player property to AVPlayer
-                player = new AVPlayer();
-                _playerViewController.Player = player;
+                    // Set Player property to AVPlayer
+                    player = new AVPlayer();
+                    _playerViewController.Player = player;
 
-                var x = _playerViewController.View;
+                    var x = _playerViewController.View;
 
-                // Use the View from the controller as the native control
-                SetNativeControl(_playerViewController.View);
+                    // Use the View from the controller as the native control
+                    SetNativeControl(_playerViewController.View);
+                }
+
+                SetAreTransportControlsEnabled();
+                SetSource();
+
+                args.NewElement.UpdateStatus += OnUpdateStatus;
+                args.NewElement.PlayRequested += OnPlayRequested;
+                args.NewElement.PauseRequested += OnPauseRequested;
+                args.NewElement.StopRequested += OnStopRequested;
             }
 
             if (args.OldElement != null)
@@ -50,16 +61,15 @@ namespace FormsVideoLibrary.iOS
                 args.OldElement.PauseRequested -= OnPauseRequested;
                 args.OldElement.StopRequested -= OnStopRequested;
             }
+        }
 
-            if (args.NewElement != null)
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (player != null)
             {
-                SetAreTransportControlsEnabled();
-                SetSource();
-
-                args.NewElement.UpdateStatus += OnUpdateStatus;
-                args.NewElement.PlayRequested += OnPlayRequested;
-                args.NewElement.PauseRequested += OnPauseRequested;
-                args.NewElement.StopRequested += OnStopRequested;
+                player.ReplaceCurrentItemWithPlayerItem(null);
             }
         }
 
@@ -77,10 +87,6 @@ namespace FormsVideoLibrary.iOS
             }
             else if (args.PropertyName == VideoPlayer.PositionProperty.PropertyName)
             {
-                // TODO: Notice no SetPosition property
-
-          //      AVPlayer player = ((AVPlayerViewController)ViewController).Player;
-
                 TimeSpan controlPosition = ConvertTime(player.CurrentTime);
 
                 if (Math.Abs((controlPosition - Element.Position).TotalSeconds) > 1)
@@ -94,6 +100,7 @@ namespace FormsVideoLibrary.iOS
         {
             ((AVPlayerViewController)ViewController).ShowsPlaybackControls = Element.AreTransportControlsEnabled;
         }
+
         void SetSource()
         {
             AVAsset asset = null;
@@ -152,25 +159,22 @@ namespace FormsVideoLibrary.iOS
         {
             VideoStatus videoStatus = VideoStatus.NotReady;
 
-     //       if (player != null)
-     //       {
-                switch (player.Status)
-                {
-                    case AVPlayerStatus.ReadyToPlay:
-                        switch (player.TimeControlStatus)
-                        {
-                            case AVPlayerTimeControlStatus.Playing:
-                                videoStatus = VideoStatus.Playing;
-                                break;
+            switch (player.Status)
+            {
+                case AVPlayerStatus.ReadyToPlay:
+                    switch (player.TimeControlStatus)
+                    {
+                        case AVPlayerTimeControlStatus.Playing:
+                            videoStatus = VideoStatus.Playing;
+                            break;
 
-                            case AVPlayerTimeControlStatus.Paused:
-                                videoStatus = VideoStatus.Paused;
-                                break;
-                        }
-                        break;
-                }
-                ((IVideoPlayerController)Element).Status = videoStatus;
-       //     }
+                        case AVPlayerTimeControlStatus.Paused:
+                            videoStatus = VideoStatus.Paused;
+                            break;
+                    }
+                    break;
+            }
+            ((IVideoPlayerController)Element).Status = videoStatus;
 
             if (playerItem != null)
             {
