@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
+using FormsVideoLibrary;
 
 namespace VideoPlayerDemos
 {
@@ -14,6 +9,23 @@ namespace VideoPlayerDemos
         public CustomTransportPage()
         {
             InitializeComponent();
+        }
+
+        void OnPlayPauseButtonClicked(object sender, EventArgs args)
+        {
+            if (videoPlayer.Status == VideoStatus.Playing)
+            {
+                videoPlayer.Pause();
+            }
+            else if (videoPlayer.Status == VideoStatus.Paused)
+            {
+                videoPlayer.Play();
+            }
+        }
+
+        void OnStopButtonClicked(object sender, EventArgs args)
+        {
+            videoPlayer.Stop();
         }
     }
 }
