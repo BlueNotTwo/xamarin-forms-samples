@@ -14,7 +14,7 @@ namespace FormsVideoLibrary
                                 VideoSource.FromUri(value) : VideoSource.FromResource(value);
             }
 
-            throw new InvalidOperationException(String.Format("Cannot convert null or whitespace to ImageSource"));
+            throw new InvalidOperationException("Cannot convert null or whitespace to ImageSource");
         }
     }
 }

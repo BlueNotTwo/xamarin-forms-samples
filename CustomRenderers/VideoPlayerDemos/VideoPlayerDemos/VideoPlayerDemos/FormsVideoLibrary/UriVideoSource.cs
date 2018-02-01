@@ -6,7 +6,7 @@ namespace FormsVideoLibrary
     public class UriVideoSource : VideoSource
     {
         public static readonly BindableProperty UriProperty =
-            BindableProperty.Create("Uri", typeof(string), typeof(UriVideoSource));
+            BindableProperty.Create(nameof(Uri), typeof(string), typeof(UriVideoSource));
 
         public string Uri
         {

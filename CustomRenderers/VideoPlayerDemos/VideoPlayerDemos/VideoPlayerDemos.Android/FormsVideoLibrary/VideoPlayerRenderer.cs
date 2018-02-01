@@ -75,6 +75,11 @@ namespace FormsVideoLibrary.Droid
             {
                 videoView.Prepared -= OnVideoViewPrepared;
             }
+            if (Element != null)
+            {
+                Element.UpdateStatus -= OnUpdateStatus;
+            }
+
             base.Dispose(disposing);
         }
 

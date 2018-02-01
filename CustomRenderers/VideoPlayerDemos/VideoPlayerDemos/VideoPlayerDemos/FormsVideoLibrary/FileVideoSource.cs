@@ -6,7 +6,7 @@ namespace FormsVideoLibrary
     public class FileVideoSource : VideoSource
     {
         public static readonly BindableProperty FileProperty =
-                  BindableProperty.Create("File", typeof(string), typeof(FileVideoSource));
+                  BindableProperty.Create(nameof(File), typeof(string), typeof(FileVideoSource));
 
         public string File
         {

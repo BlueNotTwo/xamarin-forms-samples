@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-
 using Windows.Storage;
 using Windows.Storage.Pickers;
-
 using Xamarin.Forms;
 
 [assembly: Dependency(typeof(FormsVideoLibrary.UWP.VideoPicker))]

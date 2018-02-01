@@ -15,6 +15,20 @@
                            Grid.Row="0"
                            AreTransportControlsEnabled="False"
                            Source="{StaticResource ElephantsDream}" />
+        
+        <ActivityIndicator Grid.Row="0"
+                           Color="Gray"
+                           IsVisible="False">
+            <ActivityIndicator.Triggers>
+                <DataTrigger TargetType="ActivityIndicator"
+                             Binding="{Binding Source={x:Reference videoPlayer}, 
+                                               Path=Status}"
+                             Value="{x:Static video:VideoStatus.NotReady}">
+                    <Setter Property="IsVisible" Value="True" />
+                    <Setter Property="IsRunning" Value="True" />
+                </DataTrigger>
+            </ActivityIndicator.Triggers>
+        </ActivityIndicator>
 
         <StackLayout Grid.Row="1"
                      Orientation="Horizontal"

@@ -6,7 +6,7 @@ namespace FormsVideoLibrary
     public class PositionSlider : Slider
     {
         public static readonly BindableProperty DurationProperty =
-            BindableProperty.Create("Duration", typeof(TimeSpan), typeof(PositionSlider), new TimeSpan(1),
+            BindableProperty.Create(nameof(Duration), typeof(TimeSpan), typeof(PositionSlider), new TimeSpan(1),
                                     propertyChanged: (bindable, oldValue, newValue) =>
                                     {
                                         double seconds = ((TimeSpan)newValue).TotalSeconds;
@@ -20,7 +20,7 @@ namespace FormsVideoLibrary
         }
 
         public static readonly BindableProperty PositionProperty =
-            BindableProperty.Create("Position", typeof(TimeSpan), typeof(PositionSlider), new TimeSpan(0),
+            BindableProperty.Create(nameof(Position), typeof(TimeSpan), typeof(PositionSlider), new TimeSpan(0),
                                     defaultBindingMode: BindingMode.TwoWay,
                                     propertyChanged: (bindable, oldValue, newValue) =>
                                     {

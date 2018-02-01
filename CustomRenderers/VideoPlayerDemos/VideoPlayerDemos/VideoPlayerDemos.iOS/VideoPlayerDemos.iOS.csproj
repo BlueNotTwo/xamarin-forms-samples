@@ -91,8 +91,8 @@
   <ItemGroup>
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
-    <Compile Include="VideoPicker.cs" />
-    <Compile Include="VideoPlayerRenderer.cs" />
+    <Compile Include="FormsVideoLibrary\VideoPicker.cs" />
+    <Compile Include="FormsVideoLibrary\VideoPlayerRenderer.cs" />
     <None Include="Entitlements.plist">
       <SubType>Designer</SubType>
     </None>
@@ -152,7 +152,7 @@
     <BundleResource Include="Resources\iosvideo.mp4" />
   </ItemGroup>
   <ItemGroup>
-    <BundleResource Include="Resources\Videos\FindiosApi.mp4" />
+    <BundleResource Include="Resources\Videos\iOSApiVideo.mp4" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -46,12 +46,20 @@ namespace FormsVideoLibrary.iOS
                 taskCompletionSource.SetResult(null);
             }
             imagePicker.DismissModalViewController(true);
+            DetachHandlers();
         }
 
         void OnImagePickerCancelled(object sender, EventArgs args)
         {
             taskCompletionSource.SetResult(null);
             imagePicker.DismissModalViewController(true);
+            DetachHandlers();
+        }
+
+        void DetachHandlers()
+        {
+            imagePicker.FinishedPickingMedia -= OnImagePickerFinishedPickingMedia;
+            imagePicker.Canceled -= OnImagePickerCancelled;
         }
     }
 }

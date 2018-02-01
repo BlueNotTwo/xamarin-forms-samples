@@ -6,7 +6,7 @@ namespace FormsVideoLibrary
     public class ResourceVideoSource : VideoSource
     {
         public static readonly BindableProperty PathProperty =
-            BindableProperty.Create("Path", typeof(string), typeof(ResourceVideoSource));
+            BindableProperty.Create(nameof(Path), typeof(string), typeof(ResourceVideoSource));
 
         public string Path
         {

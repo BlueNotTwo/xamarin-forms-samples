@@ -18,7 +18,7 @@ namespace FormsVideoLibrary
 
         // AreTransportControlsEnabled property
         public static readonly BindableProperty AreTransportControlsEnabledProperty =
-            BindableProperty.Create("AreTransportControlsEnabled", typeof(bool), typeof(VideoPlayer), true);
+            BindableProperty.Create(nameof(AreTransportControlsEnabled), typeof(bool), typeof(VideoPlayer), true);
 
         public bool AreTransportControlsEnabled
         {
@@ -28,7 +28,7 @@ namespace FormsVideoLibrary
 
         // Source property
         public static readonly BindableProperty SourceProperty =
-            BindableProperty.Create("Source", typeof(VideoSource), typeof(VideoPlayer), null);
+            BindableProperty.Create(nameof(Source), typeof(VideoSource), typeof(VideoPlayer), null);
 
         [TypeConverter(typeof(VideoSourceConverter))]
         public VideoSource Source
@@ -39,7 +39,7 @@ namespace FormsVideoLibrary
 
         // AutoPlay property
         public static readonly BindableProperty AutoPlayProperty =
-            BindableProperty.Create("AutoPlay", typeof(bool), typeof(VideoPlayer), true);
+            BindableProperty.Create(nameof(AutoPlay), typeof(bool), typeof(VideoPlayer), true);
 
         public bool AutoPlay
         {
@@ -49,7 +49,7 @@ namespace FormsVideoLibrary
 
         // Status read-only property
         private static readonly BindablePropertyKey StatusPropertyKey =
-            BindableProperty.CreateReadOnly("Status", typeof(VideoStatus), typeof(VideoPlayer), VideoStatus.NotReady);
+            BindableProperty.CreateReadOnly(nameof(Status), typeof(VideoStatus), typeof(VideoPlayer), VideoStatus.NotReady);
 
         public static readonly BindableProperty StatusProperty = StatusPropertyKey.BindableProperty;
 
@@ -66,7 +66,7 @@ namespace FormsVideoLibrary
 
         // Duration read-only property
         private static readonly BindablePropertyKey DurationPropertyKey =
-            BindableProperty.CreateReadOnly("Duration", typeof(TimeSpan), typeof(VideoPlayer), new TimeSpan(),
+            BindableProperty.CreateReadOnly(nameof(Duration), typeof(TimeSpan), typeof(VideoPlayer), new TimeSpan(),
                 propertyChanged: (bindable, oldValue, newValue) => ((VideoPlayer)bindable).SetTimeToEnd());
 
         public static readonly BindableProperty DurationProperty = DurationPropertyKey.BindableProperty;
@@ -84,7 +84,7 @@ namespace FormsVideoLibrary
 
         // Position property
         public static readonly BindableProperty PositionProperty =
-            BindableProperty.Create("Position", typeof(TimeSpan), typeof(VideoPlayer), new TimeSpan(),
+            BindableProperty.Create(nameof(Position), typeof(TimeSpan), typeof(VideoPlayer), new TimeSpan(),
                 propertyChanged: (bindable, oldValue, newValue) => ((VideoPlayer)bindable).SetTimeToEnd());
 
         public TimeSpan Position
@@ -95,7 +95,7 @@ namespace FormsVideoLibrary
 
         // TimeToEnd property
         private static readonly BindablePropertyKey TimeToEndPropertyKey =
-            BindableProperty.CreateReadOnly("TimeToEnd", typeof(TimeSpan), typeof(VideoPlayer), new TimeSpan());
+            BindableProperty.CreateReadOnly(nameof(TimeToEnd), typeof(TimeSpan), typeof(VideoPlayer), new TimeSpan());
 
         public static readonly BindableProperty TimeToEndProperty = TimeToEndPropertyKey.BindableProperty;
 
