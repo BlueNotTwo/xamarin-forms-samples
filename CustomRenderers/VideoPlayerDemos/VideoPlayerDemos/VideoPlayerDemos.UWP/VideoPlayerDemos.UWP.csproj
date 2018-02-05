@@ -104,7 +104,7 @@
     <Compile Include="FormsVideoLibrary\VideoPlayerRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <AppxManifest Include="Package.appxmanifest">
+    <AppxManifest Include="Assets\Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
     <None Include="VideoPlayerDemos.UWP_TemporaryKey.pfx" />

@@ -118,6 +118,8 @@ namespace FormsVideoLibrary.UWP
 
         async void SetSource()
         {
+            bool hasSetSource = false;
+
             if (Element.Source is UriVideoSource)
             {
                 string uri = (Element.Source as UriVideoSource).Uri;
@@ -125,6 +127,7 @@ namespace FormsVideoLibrary.UWP
                 if (!String.IsNullOrWhiteSpace(uri))
                 {
                     Control.Source = new Uri(uri);
+                    hasSetSource = true;
                 }
             }
             else if (Element.Source is FileVideoSource)
@@ -137,6 +140,7 @@ namespace FormsVideoLibrary.UWP
                     StorageFile storageFile = await StorageFile.GetFileFromPathAsync(filename);
                     IRandomAccessStreamWithContentType stream = await storageFile.OpenReadAsync();
                     Control.SetSource(stream, storageFile.ContentType);
+                    hasSetSource = true;
                 }
             }
             else if (Element.Source is ResourceVideoSource)
@@ -146,7 +150,13 @@ namespace FormsVideoLibrary.UWP
                 if (!String.IsNullOrWhiteSpace(path))
                 {
                     Control.Source = new Uri(path);
+                    hasSetSource = true;
                 }
+            }
+           
+            if (!hasSetSource)
+            {
+                Control.Source = null;
             }
         }
 

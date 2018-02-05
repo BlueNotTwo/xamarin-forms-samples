@@ -69,7 +69,7 @@
       <DependentUpon>SelectWebVideoPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="FormsVideoLibrary\UriVideoSource.cs" />
-    <Compile Include="FormsVideoLibrary\VideoInfo.cs" />
+    <Compile Include="VideoInfo.cs" />
     <Compile Include="FormsVideoLibrary\VideoPlayer.cs" />
     <Compile Include="FormsVideoLibrary\VideoSource.cs" />
     <Compile Include="FormsVideoLibrary\VideoSourceConverter.cs" />
